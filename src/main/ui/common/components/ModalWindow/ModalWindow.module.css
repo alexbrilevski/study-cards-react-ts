@@ -22,14 +22,19 @@
 .modal-header {
   position: relative;
   min-height: 46px;
-  padding: var(--indent-s) var(--indent-l) var(--indent-s) var(--indent-m);
+  padding: var(--indent-m) var(--indent-xl) var(--indent-m) var(--indent-base);
   border-bottom: 1px solid var(--border-color-default);
+}
+
+.modal-header .modal-title {
+  font-size: var(--font-size-l);
+  font-weight: var(--modal-title-font-weight);
 }
 
 .modal-header .close-button {
   position: absolute;
   top: 50%;
-  right: 4px;
+  right: var(--indent-s);
   transform: translateY(-50%);
   padding: var(--indent-s);
   background-color: transparent;
@@ -40,5 +45,5 @@
 }
 
 .modal-content {
-  padding: var(--indent-base) var(--indent-m);
+  padding: var(--indent-m) var(--indent-base) var(--indent-l) var(--indent-base);
 }

@@ -16,7 +16,7 @@ export const ModalWindow: FC<ModalWindowProps> = ({ title, show, onClose, childr
     <div className={s['modal-overlay']} onClick={onClose}>
       <div className={s['modal']}>
         <div className={s['modal-header']}>
-          {title && <h2>{title}</h2>}
+          {title && <h2 className={s['modal-title']}>{title}</h2>}
           <button className={s['close-button']} onClick={onClose}>
             <IconSvg src={closeIcon} className={s['icon']} size={14} />
           </button>
