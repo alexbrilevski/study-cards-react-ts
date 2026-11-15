@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../../main/bll/store';
 import { useDebouncedCallback } from '../../../utils/hooks/useDebouncedCallback';
@@ -10,6 +10,8 @@ import Button from '../../../main/ui/common/components/Button/Button';
 import { PackListHeader } from './PackListHeader/PackListHeader';
 import { PackListTable } from './PackListTable/PackListTable';
 import { Pagination } from '../../../main/ui/common/components/Pagination/Pagination';
+import { CardPackFormModal } from './Modals/CardPackFormModal';
+import type { CardPackFormData } from './Modals/PackForm';
 
 export type CardsPackListView = 'my' | 'all';
 
@@ -34,12 +36,18 @@ export const PackList = () => {
   );
   const dispatch = useAppDispatch();
 
+  const [showAddPackModal, setShowAddPackModal] = useState<boolean>(false);
+
   useEffect(() => {
     dispatch(fetchPackList());
   }, [page, pageSize, packName, user_id, min, max, sortPacks]);
 
-  const handleAddPack = () => {
-    dispatch(addPack({ name: 'New pack', isPrivate: false }));
+  const handleAddPackClick = () => {
+    setShowAddPackModal(true);
+  };
+
+  const handleAddNewPack = (cardPack: CardPackFormData) => {
+    dispatch(addPack(cardPack));
   };
 
   const setPackNameSearchParam = useDebouncedCallback((packName: string) => {
@@ -82,7 +90,7 @@ export const PackList = () => {
       <div className="page-header">
         <div className="page-header-main">
           <h1>Pack list</h1>
-          <Button variant={'contained'} color={'primary'} onClick={handleAddPack}>
+          <Button variant={'contained'} color={'primary'} onClick={handleAddPackClick}>
             Add new pack
           </Button>
         </div>
@@ -122,6 +130,11 @@ export const PackList = () => {
           </p>
         )}
       </>
+      <CardPackFormModal
+        show={showAddPackModal}
+        onCloseModal={setShowAddPackModal}
+        onSubmitForm={handleAddNewPack}
+      />
     </>
   );
 };
