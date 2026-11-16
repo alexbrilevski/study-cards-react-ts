@@ -4,12 +4,16 @@ import { PackForm, type CardPackFormData } from './PackForm';
 
 type CardPackFormModalProps = {
   show: boolean;
+  title: string;
+  initValues?: CardPackFormData;
   onCloseModal: (show: boolean) => void;
   onSubmitForm: (cardPackData: CardPackFormData) => void;
 };
 
 export const CardPackFormModal: FC<CardPackFormModalProps> = ({
   show,
+  title,
+  initValues,
   onCloseModal,
   onSubmitForm,
 }) => {
@@ -23,8 +27,12 @@ export const CardPackFormModal: FC<CardPackFormModalProps> = ({
   };
 
   return (
-    <ModalWindow title={'Add new pack'} show={show} handleCloseModal={handleCloseModal}>
-      <PackForm onSave={handleSublitForm} onCancel={handleCloseModal} />
+    <ModalWindow title={title} show={show} handleCloseModal={handleCloseModal}>
+      <PackForm
+        initValues={initValues}
+        onSave={handleSublitForm}
+        onCancel={handleCloseModal}
+      />
     </ModalWindow>
   );
 };

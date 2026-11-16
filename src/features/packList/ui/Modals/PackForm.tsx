@@ -14,15 +14,16 @@ type PackFormErrors = {
 };
 
 type PackFormProps = {
+  initValues?: CardPackFormData;
   onSave: (formData: CardPackFormData) => void;
   onCancel: () => void;
 };
 
-export const PackForm: FC<PackFormProps> = ({ onSave, onCancel }) => {
+export const PackForm: FC<PackFormProps> = ({ initValues, onSave, onCancel }) => {
   const packForm = useFormik({
     initialValues: {
-      name: '',
-      isPrivate: false,
+      name: initValues ? initValues.name : '',
+      isPrivate: initValues ? initValues.isPrivate : false,
     },
     validate: (values) => {
       const errors: PackFormErrors = {};
@@ -45,7 +46,12 @@ export const PackForm: FC<PackFormProps> = ({ onSave, onCancel }) => {
         error={packForm.errors.name && packForm.errors.name ? packForm.errors.name : ''}
         {...packForm.getFieldProps('name')}
       />
-      <Checkbox {...packForm.getFieldProps('isPrivate')}>Private pack</Checkbox>
+      <Checkbox
+        checked={packForm.values.isPrivate}
+        {...packForm.getFieldProps('isPrivate')}
+      >
+        Private pack
+      </Checkbox>
       <div className="modal-actions">
         <Button variant={'contained'} color={'white'} type={'button'} onClick={onCancel}>
           Cancel

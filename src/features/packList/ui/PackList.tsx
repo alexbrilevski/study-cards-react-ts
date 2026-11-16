@@ -4,7 +4,12 @@ import { useAppDispatch, useAppSelector } from '../../../main/bll/store';
 import { useDebouncedCallback } from '../../../utils/hooks/useDebouncedCallback';
 import type { User } from '../../../main/types/user';
 import type { Pack } from '../../../main/types/pack';
-import { addPack, fetchPackList, setPackListParams } from '../bll/packListReducer';
+import {
+  addPack,
+  editPack,
+  fetchPackList,
+  setPackListParams,
+} from '../bll/packListReducer';
 import { PATH } from '../../../main/ui/Main/Pages';
 import Button from '../../../main/ui/common/components/Button/Button';
 import { PackListHeader } from './PackListHeader/PackListHeader';
@@ -16,6 +21,14 @@ import type { CardPackFormData } from './Modals/PackForm';
 export type CardsPackListView = 'my' | 'all';
 
 export const PackList = () => {
+  const [showAddPackModal, setShowAddPackModal] = useState<boolean>(false);
+  const [showEditPackModal, setShowEditPackModal] = useState<boolean>(false);
+  const [selectedCardPackId, setSelectedCardPackId] = useState<string>('');
+  const [cardPackFormValues, setCardPackFormValues] = useState<CardPackFormData>({
+    name: '',
+    isPrivate: false,
+  });
+
   const authUser = useAppSelector<User | null>((state) => state.profile.user);
   const cardPacks = useAppSelector<Pack[]>((state) => state.packList.cardPacks);
   const minCardsCount = useAppSelector<number>((state) => state.packList.minCardsCount);
@@ -36,18 +49,29 @@ export const PackList = () => {
   );
   const dispatch = useAppDispatch();
 
-  const [showAddPackModal, setShowAddPackModal] = useState<boolean>(false);
-
   useEffect(() => {
     dispatch(fetchPackList());
   }, [page, pageSize, packName, user_id, min, max, sortPacks]);
 
   const handleAddPackClick = () => {
+    setCardPackFormValues({ name: '', isPrivate: false });
     setShowAddPackModal(true);
   };
 
   const handleAddNewPack = (cardPack: CardPackFormData) => {
     dispatch(addPack(cardPack));
+  };
+
+  const handleEditPackClick = (pack: Pack) => {
+    setSelectedCardPackId(pack._id);
+    setCardPackFormValues({ name: pack.name, isPrivate: pack.private });
+    setShowEditPackModal(true);
+  };
+
+  const handleEditPack = (cardPack: CardPackFormData) => {
+    dispatch(
+      editPack({ _id: selectedCardPackId, ...cardPack, private: cardPack.isPrivate }),
+    );
   };
 
   const setPackNameSearchParam = useDebouncedCallback((packName: string) => {
@@ -114,6 +138,7 @@ export const PackList = () => {
               packs={cardPacks}
               authUserId={authUser._id}
               sortPacks={sortPacks}
+              handleEditPackClick={handleEditPackClick}
             />
             <Pagination
               currentPage={page}
@@ -132,8 +157,16 @@ export const PackList = () => {
       </>
       <CardPackFormModal
         show={showAddPackModal}
+        title={'Add new pack'}
         onCloseModal={setShowAddPackModal}
         onSubmitForm={handleAddNewPack}
+      />
+      <CardPackFormModal
+        show={showEditPackModal}
+        title={'Edit pack'}
+        initValues={cardPackFormValues}
+        onCloseModal={setShowEditPackModal}
+        onSubmitForm={handleEditPack}
       />
     </>
   );
