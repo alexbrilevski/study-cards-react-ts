@@ -17,7 +17,7 @@ export const CardPackFormModal: FC<CardPackFormModalProps> = ({
   onCloseModal,
   onSubmitForm,
 }) => {
-  const handleSublitForm = (cardPackData: CardPackFormData) => {
+  const handleSubmitForm = (cardPackData: CardPackFormData) => {
     onSubmitForm(cardPackData);
     onCloseModal(false);
   };
@@ -30,7 +30,7 @@ export const CardPackFormModal: FC<CardPackFormModalProps> = ({
     <ModalWindow title={title} show={show} handleCloseModal={handleCloseModal}>
       <PackForm
         initValues={initValues}
-        onSave={handleSublitForm}
+        onSave={handleSubmitForm}
         onCancel={handleCloseModal}
       />
     </ModalWindow>
