@@ -2,7 +2,7 @@ import type { FC } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import type { Pack } from '../../../../main/types/pack';
 import { useAppDispatch } from '../../../../main/bll/store';
-import { deletePack, setPackListParams } from '../../bll/packListReducer';
+import { setPackListParams } from '../../bll/packListReducer';
 import { PATH } from '../../../../main/ui/Main/Pages';
 import { formatDate } from '../../../../utils/formatDate';
 import Button from '../../../../main/ui/common/components/Button/Button';
@@ -18,6 +18,7 @@ type PackListTableProps = {
   authUserId: string;
   sortPacks: string;
   handleEditPackClick: (pack: Pack) => void;
+  handleDeletePackClick: (pack: Pack) => void;
 };
 
 export const PackListTable: FC<PackListTableProps> = ({
@@ -25,6 +26,7 @@ export const PackListTable: FC<PackListTableProps> = ({
   authUserId,
   sortPacks,
   handleEditPackClick,
+  handleDeletePackClick,
 }) => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
@@ -37,8 +39,8 @@ export const PackListTable: FC<PackListTableProps> = ({
     handleEditPackClick(pack);
   };
 
-  const handleDeletePack = (id: string) => {
-    dispatch(deletePack(id));
+  const handleDeletePack = (pack: Pack) => {
+    handleDeletePackClick(pack);
   };
 
   const handleLearnCardPack = (id: string) => {
@@ -100,7 +102,7 @@ export const PackListTable: FC<PackListTableProps> = ({
                       <Button onClick={() => handleEditPack(pack)}>
                         <IconSvg src={editIcon} size={16} />
                       </Button>
-                      <Button onClick={() => handleDeletePack(pack._id)}>
+                      <Button onClick={() => handleDeletePack(pack)}>
                         <IconSvg src={deleteIcon} size={16} />
                       </Button>
                     </>

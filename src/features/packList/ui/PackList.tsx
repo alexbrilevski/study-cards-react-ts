@@ -6,6 +6,7 @@ import type { User } from '../../../main/types/user';
 import type { Pack } from '../../../main/types/pack';
 import {
   addPack,
+  deletePack,
   editPack,
   fetchPackList,
   setPackListParams,
@@ -17,12 +18,14 @@ import { PackListTable } from './PackListTable/PackListTable';
 import { Pagination } from '../../../main/ui/common/components/Pagination/Pagination';
 import { CardPackFormModal } from './Modals/CardPackFormModal';
 import type { CardPackFormData } from './Modals/PackForm';
+import { DeleteCardPackModal } from './Modals/DeleteCardPackModal';
 
 export type CardsPackListView = 'my' | 'all';
 
 export const PackList = () => {
   const [showAddPackModal, setShowAddPackModal] = useState<boolean>(false);
   const [showEditPackModal, setShowEditPackModal] = useState<boolean>(false);
+  const [showDeletePackModal, setShowDeletePackModal] = useState<boolean>(false);
   const [selectedCardPack, setSelectedCardPack] = useState<Pack | null>(null);
   const [cardPackFormValues, setCardPackFormValues] = useState<CardPackFormData>({
     name: '',
@@ -77,6 +80,17 @@ export const PackList = () => {
           private: cardPackData.isPrivate,
         }),
       );
+    }
+  };
+
+  const handleDeletePackClick = (pack: Pack) => {
+    setSelectedCardPack(pack);
+    setShowDeletePackModal(true);
+  };
+
+  const handleDeletePack = () => {
+    if (selectedCardPack) {
+      dispatch(deletePack(selectedCardPack._id));
     }
   };
 
@@ -145,6 +159,7 @@ export const PackList = () => {
               authUserId={authUser._id}
               sortPacks={sortPacks}
               handleEditPackClick={handleEditPackClick}
+              handleDeletePackClick={handleDeletePackClick}
             />
             <Pagination
               currentPage={page}
@@ -174,6 +189,15 @@ export const PackList = () => {
         onCloseModal={setShowEditPackModal}
         onSubmitForm={handleEditPack}
       />
+      {selectedCardPack && (
+        <DeleteCardPackModal
+          show={showDeletePackModal}
+          title={'Delete pack'}
+          pack={selectedCardPack}
+          onCloseModal={setShowDeletePackModal}
+          onConfirmDelete={handleDeletePack}
+        />
+      )}
     </>
   );
 };
