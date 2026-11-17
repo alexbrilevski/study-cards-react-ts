@@ -191,11 +191,17 @@
   border-radius: 50%;
 }
 
+.modal-text {
+  font-size: var(--font-size-m);
+  line-height: var(--line-height-l);
+}
+
 .modal-actions {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: var(--indent-base);
+  margin-top: var(--indent-base);
 }
 
 .modal-actions button[type='submit'] {
