@@ -23,7 +23,7 @@ export type CardsPackListView = 'my' | 'all';
 export const PackList = () => {
   const [showAddPackModal, setShowAddPackModal] = useState<boolean>(false);
   const [showEditPackModal, setShowEditPackModal] = useState<boolean>(false);
-  const [selectedCardPackId, setSelectedCardPackId] = useState<string>('');
+  const [selectedCardPack, setSelectedCardPack] = useState<Pack | null>(null);
   const [cardPackFormValues, setCardPackFormValues] = useState<CardPackFormData>({
     name: '',
     isPrivate: false,
@@ -63,15 +63,21 @@ export const PackList = () => {
   };
 
   const handleEditPackClick = (pack: Pack) => {
-    setSelectedCardPackId(pack._id);
+    setSelectedCardPack(pack);
     setCardPackFormValues({ name: pack.name, isPrivate: pack.private });
     setShowEditPackModal(true);
   };
 
-  const handleEditPack = (cardPack: CardPackFormData) => {
-    dispatch(
-      editPack({ _id: selectedCardPackId, ...cardPack, private: cardPack.isPrivate }),
-    );
+  const handleEditPack = (cardPackData: CardPackFormData) => {
+    if (selectedCardPack) {
+      dispatch(
+        editPack({
+          _id: selectedCardPack._id,
+          ...cardPackData,
+          private: cardPackData.isPrivate,
+        }),
+      );
+    }
   };
 
   const setPackNameSearchParam = useDebouncedCallback((packName: string) => {
