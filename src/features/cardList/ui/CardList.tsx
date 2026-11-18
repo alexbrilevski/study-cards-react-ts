@@ -3,7 +3,12 @@ import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import type { Card } from '../../../main/types/card';
 import type { User } from '../../../main/types/user';
 import { useAppDispatch, useAppSelector } from '../../../main/bll/store';
-import { addCard, fetchCardList, setCardListParams } from '../bll/cardListReducer';
+import {
+  addCard,
+  editCard,
+  fetchCardList,
+  setCardListParams,
+} from '../bll/cardListReducer';
 import { useDebouncedCallback } from '../../../utils/hooks/useDebouncedCallback';
 import { PATH } from '../../../main/ui/Main/Pages';
 import ButtonBack from '../../../main/ui/common/components/ButtonBack/ButtonBack';
@@ -18,6 +23,8 @@ import s from './CardList.module.css';
 
 export const CardList: FC = () => {
   const [showAddCardModal, setShowAddCardModal] = useState<boolean>(false);
+  const [showEditCardModal, setShowEditCardModal] = useState<boolean>(false);
+  const [selectedCard, setSelectedCard] = useState<Card | null>(null);
 
   const { cardPackId } = useParams<'cardPackId'>();
   const authUser = useAppSelector<User | null>((state) => state.profile.user);
@@ -36,6 +43,8 @@ export const CardList: FC = () => {
   const isAuthUserPack = packUserId === authUser?._id;
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+
+  let cardFormValues = null;
 
   useEffect(() => {
     if (cardPackId) dispatch(fetchCardList(cardPackId));
@@ -66,6 +75,17 @@ export const CardList: FC = () => {
     );
   };
 
+  const handleEditCardClick = (card: Card) => {
+    setSelectedCard(card);
+    setShowEditCardModal(true);
+  };
+
+  const handleEditCard = (cardFormData: CardFormData) => {
+    if (selectedCard) {
+      dispatch(editCard({ _id: selectedCard._id, ...cardFormData }));
+    }
+  };
+
   const handleLearnCardPack = () => {
     navigate(`${PATH.LEARN}/${cardPackId}`);
   };
@@ -81,6 +101,13 @@ export const CardList: FC = () => {
   const setCardListPageSize = (pageSize: number) => {
     dispatch(setCardListParams({ pageCount: pageSize }));
   };
+
+  if (selectedCard) {
+    cardFormValues = {
+      question: selectedCard.question,
+      answer: selectedCard.answer,
+    };
+  }
 
   if (!authUser) {
     return <Navigate to={PATH.LOGIN} />;
@@ -135,6 +162,7 @@ export const CardList: FC = () => {
             cards={cards}
             sortCards={sortCards}
             isAuthUserPack={isAuthUserPack}
+            handleEditCardClick={handleEditCardClick}
           />
           <Pagination
             currentPage={page}
@@ -167,6 +195,15 @@ export const CardList: FC = () => {
         onCloseModal={setShowAddCardModal}
         onSubmitForm={handleAddCard}
       />
+      {cardFormValues && (
+        <CardFormModal
+          title={'Edit card'}
+          show={showEditCardModal}
+          initValues={cardFormValues}
+          onCloseModal={setShowEditCardModal}
+          onSubmitForm={handleEditCard}
+        />
+      )}
     </>
   );
 };
