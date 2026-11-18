@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import type { Card } from '../../../../main/types/card';
 import { useAppDispatch } from '../../../../main/bll/store';
-import { deleteCard, setCardListParams } from '../../bll/cardListReducer';
+import { setCardListParams } from '../../bll/cardListReducer';
 import { formatDate } from '../../../../utils/formatDate';
 import Button from '../../../../main/ui/common/components/Button/Button';
 import ButtonSort from '../../../../main/ui/common/components/ButtonSort/ButtonSort';
@@ -16,6 +16,7 @@ type CardListTableProps = {
   sortCards: string;
   isAuthUserPack: boolean;
   handleEditCardClick: (card: Card) => void;
+  handleDeleteCardClick: (card: Card) => void;
 };
 
 export const CardListTable: FC<CardListTableProps> = ({
@@ -23,6 +24,7 @@ export const CardListTable: FC<CardListTableProps> = ({
   sortCards,
   isAuthUserPack,
   handleEditCardClick,
+  handleDeleteCardClick,
 }) => {
   const dispatch = useAppDispatch();
 
@@ -34,8 +36,8 @@ export const CardListTable: FC<CardListTableProps> = ({
     handleEditCardClick(card);
   };
 
-  const handleDeleteCard = (id: string) => {
-    dispatch(deleteCard(id));
+  const handleDeleteCard = (card: Card) => {
+    handleDeleteCardClick(card);
   };
 
   return (
@@ -96,7 +98,7 @@ export const CardListTable: FC<CardListTableProps> = ({
                   <Button onClick={() => handleUpdateCard(card)}>
                     <IconSvg src={editIcon} size={16} />
                   </Button>
-                  <Button onClick={() => handleDeleteCard(card._id)}>
+                  <Button onClick={() => handleDeleteCard(card)}>
                     <IconSvg src={deleteIcon} size={16} />
                   </Button>
                 </div>

@@ -5,6 +5,7 @@ import type { User } from '../../../main/types/user';
 import { useAppDispatch, useAppSelector } from '../../../main/bll/store';
 import {
   addCard,
+  deleteCard,
   editCard,
   fetchCardList,
   setCardListParams,
@@ -19,11 +20,13 @@ import { CardListTable } from './CardListTable/CardListTable';
 import { Pagination } from '../../../main/ui/common/components/Pagination/Pagination';
 import type { CardFormData } from './Modals/CardForm';
 import { CardFormModal } from './Modals/CardFormModal';
+import { DeleteCardModal } from './Modals/DeleteCardModal';
 import s from './CardList.module.css';
 
 export const CardList: FC = () => {
   const [showAddCardModal, setShowAddCardModal] = useState<boolean>(false);
   const [showEditCardModal, setShowEditCardModal] = useState<boolean>(false);
+  const [showDeleteCardModal, setShowDeleteCardModal] = useState<boolean>(false);
   const [selectedCard, setSelectedCard] = useState<Card | null>(null);
 
   const { cardPackId } = useParams<'cardPackId'>();
@@ -84,6 +87,15 @@ export const CardList: FC = () => {
     if (selectedCard) {
       dispatch(editCard({ _id: selectedCard._id, ...cardFormData }));
     }
+  };
+
+  const handleDeleteCardClick = (card: Card) => {
+    setSelectedCard(card);
+    setShowDeleteCardModal(true);
+  };
+
+  const handleDeleteCard = (id: string) => {
+    dispatch(deleteCard(id));
   };
 
   const handleLearnCardPack = () => {
@@ -163,6 +175,7 @@ export const CardList: FC = () => {
             sortCards={sortCards}
             isAuthUserPack={isAuthUserPack}
             handleEditCardClick={handleEditCardClick}
+            handleDeleteCardClick={handleDeleteCardClick}
           />
           <Pagination
             currentPage={page}
@@ -202,6 +215,15 @@ export const CardList: FC = () => {
           initValues={cardFormValues}
           onCloseModal={setShowEditCardModal}
           onSubmitForm={handleEditCard}
+        />
+      )}
+      {selectedCard && (
+        <DeleteCardModal
+          title={'Delete card'}
+          show={showDeleteCardModal}
+          card={selectedCard}
+          onCloseModal={setShowDeleteCardModal}
+          onConfirmDelete={handleDeleteCard}
         />
       )}
     </>
