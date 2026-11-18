@@ -22,6 +22,7 @@ const initState = {
   cards: [] as Card[],
   packUserId: '',
   packName: '',
+  packPrivate: false,
   cardsTotalCount: 0,
   maxGrade: 0,
   minGrade: 0,

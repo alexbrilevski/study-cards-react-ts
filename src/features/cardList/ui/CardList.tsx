@@ -3,12 +3,14 @@ import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import type { Card } from '../../../main/types/card';
 import type { User } from '../../../main/types/user';
 import { useAppDispatch, useAppSelector } from '../../../main/bll/store';
+import { deletePack, editPack } from '../../packList/bll/packListReducer';
 import {
   addCard,
   deleteCard,
   editCard,
   fetchCardList,
   setCardListParams,
+  updateCardPackName,
 } from '../bll/cardListReducer';
 import { useDebouncedCallback } from '../../../utils/hooks/useDebouncedCallback';
 import { PATH } from '../../../main/ui/Main/Pages';
@@ -21,17 +23,21 @@ import { Pagination } from '../../../main/ui/common/components/Pagination/Pagina
 import type { CardFormData } from './Modals/CardForm';
 import { CardFormModal } from './Modals/CardFormModal';
 import { DeleteCardModal } from './Modals/DeleteCardModal';
+import { CardPackFormModal } from '../../packList/ui/Modals/CardPackFormModal';
+import type { CardPackFormData } from '../../packList/ui/Modals/PackForm';
 import s from './CardList.module.css';
 
 export const CardList: FC = () => {
   const [showAddCardModal, setShowAddCardModal] = useState<boolean>(false);
   const [showEditCardModal, setShowEditCardModal] = useState<boolean>(false);
   const [showDeleteCardModal, setShowDeleteCardModal] = useState<boolean>(false);
+  const [showEditCardPackModal, setShowEditCardPackModal] = useState<boolean>(false);
   const [selectedCard, setSelectedCard] = useState<Card | null>(null);
 
   const { cardPackId } = useParams<'cardPackId'>();
   const authUser = useAppSelector<User | null>((state) => state.profile.user);
   const packName = useAppSelector<string>((state) => state.cardList.packName);
+  const packPrivate = useAppSelector<boolean>((state) => state.cardList.packPrivate);
   const packUserId = useAppSelector<string>((state) => state.cardList.packUserId);
   const cards = useAppSelector<Card[]>((state) => state.cardList.cards);
   const cardQuestion = useAppSelector<string | undefined>(
@@ -47,6 +53,7 @@ export const CardList: FC = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
+  const cardPackFormValues = { name: packName, isPrivate: packPrivate };
   let cardFormValues = null;
 
   useEffect(() => {
@@ -98,6 +105,21 @@ export const CardList: FC = () => {
     dispatch(deleteCard(id));
   };
 
+  const handleEditCardPackClick = () => {
+    setShowEditCardPackModal(true);
+  };
+
+  const handleEditCardPack = (cardPackFormData: CardPackFormData) => {
+    const { name, isPrivate } = cardPackFormData;
+    dispatch(updateCardPackName(cardPackFormData.name));
+    dispatch(editPack({ _id: cardPackId as string, name, private: isPrivate }));
+  };
+
+  const handleDeleteCardPackClick = () => {
+    dispatch(deletePack(cardPackId as string));
+    navigate(PATH.PACK_LIST);
+  };
+
   const handleLearnCardPack = () => {
     navigate(`${PATH.LEARN}/${cardPackId}`);
   };
@@ -134,8 +156,10 @@ export const CardList: FC = () => {
             <h1>{packName}</h1>
             {isAuthUserPack && (
               <CardPackMenu
-                cardPackId={cardPackId as string}
                 isEmptyPack={cards.length === 0}
+                handleEditCardPack={handleEditCardPackClick}
+                handleDeleteCardPack={handleDeleteCardPackClick}
+                handleLearnCardPack={handleLearnCardPack}
               />
             )}
           </div>
@@ -226,6 +250,13 @@ export const CardList: FC = () => {
           onConfirmDelete={handleDeleteCard}
         />
       )}
+      <CardPackFormModal
+        title={'Edit card pack'}
+        show={showEditCardPackModal}
+        initValues={cardPackFormValues}
+        onCloseModal={setShowEditCardPackModal}
+        onSubmitForm={handleEditCardPack}
+      />
     </>
   );
 };
