@@ -1,4 +1,4 @@
-import { useEffect, type FC } from 'react';
+import { useEffect, useState, type FC } from 'react';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import type { Card } from '../../../main/types/card';
 import type { User } from '../../../main/types/user';
@@ -12,9 +12,13 @@ import SearchField from '../../../main/ui/common/components/SearchField/SearchFi
 import { CardPackMenu } from '../../../main/ui/common/components/CardPackMenu/CardPackMenu';
 import { CardListTable } from './CardListTable/CardListTable';
 import { Pagination } from '../../../main/ui/common/components/Pagination/Pagination';
+import type { CardFormData } from './Modals/CardForm';
+import { CardFormModal } from './Modals/CardFormModal';
 import s from './CardList.module.css';
 
 export const CardList: FC = () => {
+  const [showAddCardModal, setShowAddCardModal] = useState<boolean>(false);
+
   const { cardPackId } = useParams<'cardPackId'>();
   const authUser = useAppSelector<User | null>((state) => state.profile.user);
   const packName = useAppSelector<string>((state) => state.cardList.packName);
@@ -49,12 +53,15 @@ export const CardList: FC = () => {
     navigate(-1);
   };
 
-  const handleAddCard = () => {
+  const handleAddCardClick = () => {
+    setShowAddCardModal(true);
+  };
+
+  const handleAddCard = (cardFormData: CardFormData) => {
     dispatch(
       addCard({
         cardsPack_id: cardPackId as string,
-        question: 'New question',
-        answer: 'New answer',
+        ...cardFormData,
       }),
     );
   };
@@ -95,11 +102,19 @@ export const CardList: FC = () => {
           </div>
           {cards.length !== 0 &&
             (isAuthUserPack ? (
-              <Button variant={'contained'} color={'primary'} onClick={handleAddCard}>
+              <Button
+                variant={'contained'}
+                color={'primary'}
+                onClick={handleAddCardClick}
+              >
                 Add new card
               </Button>
             ) : (
-              <Button variant={'contained'} color={'primary'} onClick={handleLearnCardPack}>
+              <Button
+                variant={'contained'}
+                color={'primary'}
+                onClick={handleLearnCardPack}
+              >
                 Learn pack
               </Button>
             ))}
@@ -135,13 +150,23 @@ export const CardList: FC = () => {
           {isAuthUserPack && (
             <>
               <p>Click add new card to fill this pack.</p>
-              <Button variant={'contained'} color={'primary'} onClick={handleAddCard}>
+              <Button
+                variant={'contained'}
+                color={'primary'}
+                onClick={handleAddCardClick}
+              >
                 Add new card
               </Button>
             </>
           )}
         </div>
       )}
+      <CardFormModal
+        title={'Add new card'}
+        show={showAddCardModal}
+        onCloseModal={setShowAddCardModal}
+        onSubmitForm={handleAddCard}
+      />
     </>
   );
 };
