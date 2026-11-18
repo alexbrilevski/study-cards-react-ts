@@ -43,7 +43,7 @@ export const PackForm: FC<PackFormProps> = ({ initValues, onSave, onCancel }) =>
     <form onSubmit={packForm.handleSubmit}>
       <InputText
         label={'Pack name'}
-        error={packForm.errors.name && packForm.errors.name ? packForm.errors.name : ''}
+        error={packForm.errors.name && packForm.touched.name ? packForm.errors.name : ''}
         {...packForm.getFieldProps('name')}
       />
       <Checkbox
