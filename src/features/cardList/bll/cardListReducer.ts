@@ -10,12 +10,14 @@ const ACTION_TYPES = {
   SET_CARD_LIST_DATA: 'card-list/SET-DATA',
   SET_CARD_LIST_PARAMS: 'card-list/SET-CARD-LIST-PARAMS',
   UPDATE_CARD_PACK_NAME: 'card-list/UPDATE-CARD-PACK-NAME',
+  SET_DELETED_CARD_PACK_STATE: 'card-list/SET-DELETED-CARD-PACK-STATE',
 } as const;
 
 export type CardListActions =
   | ReturnType<typeof setCardListData>
   | ReturnType<typeof setCardListParams>
-  | ReturnType<typeof updateCardPackName>;
+  | ReturnType<typeof updateCardPackName>
+  | ReturnType<typeof setDeletedCardPackState>;
 
 type InitState = typeof initState;
 
@@ -24,6 +26,7 @@ const initState = {
   packUserId: '',
   packName: '',
   packPrivate: false,
+  packDeleted: false,
   cardsTotalCount: 0,
   maxGrade: 0,
   minGrade: 0,
@@ -57,6 +60,9 @@ export const cardListReducer = (
     case ACTION_TYPES.UPDATE_CARD_PACK_NAME: {
       return { ...state, ...action.payload };
     }
+    case ACTION_TYPES.SET_DELETED_CARD_PACK_STATE: {
+      return { ...state, packDeleted: true };
+    }
     default: {
       return state;
     }
@@ -68,8 +74,10 @@ const setCardListData = (cardListData: CardListData) =>
   ({ type: ACTION_TYPES.SET_CARD_LIST_DATA, payload: cardListData }) as const;
 export const setCardListParams = (params: Omit<CardListQueryParams, 'cardsPack_id'>) =>
   ({ type: ACTION_TYPES.SET_CARD_LIST_PARAMS, payload: params }) as const;
-export const updateCardPackName = (packName: string) =>
+const updateCardPackName = (packName: string) =>
   ({ type: ACTION_TYPES.UPDATE_CARD_PACK_NAME, payload: { packName } }) as const;
+const setDeletedCardPackState = () =>
+  ({ type: ACTION_TYPES.SET_DELETED_CARD_PACK_STATE }) as const;
 
 // Thunk creators
 export const fetchCardList =
@@ -145,7 +153,7 @@ export const deleteCard =
         dispatch(setAppIsLoading(false));
       });
   };
-export const editSelectedCardPack =
+export const editCurrentCardPack =
   (cardsPack: UpdatePackRequestData): RootThunk =>
   (dispatch) => {
     dispatch(setAppIsLoading(true));
@@ -162,5 +170,24 @@ export const editSelectedCardPack =
       })
       .finally(() => {
         dispatch(setAppIsLoading(true));
+      });
+  };
+export const deleteCurrentCardPack =
+  (id: string): RootThunk =>
+  (dispatch) => {
+    dispatch(setAppIsLoading(true));
+    packListAPI
+      .deletePack(id)
+      .then((data) => {
+        const { deletedCardsPack } = data;
+        if (deletedCardsPack) {
+          dispatch(setDeletedCardPackState());
+        }
+      })
+      .catch((error) => {
+        handleApiRequestError(error, dispatch);
+      })
+      .finally(() => {
+        dispatch(setAppIsLoading(false));
       });
   };

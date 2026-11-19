@@ -3,12 +3,12 @@ import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import type { Card } from '../../../main/types/card';
 import type { User } from '../../../main/types/user';
 import { useAppDispatch, useAppSelector } from '../../../main/bll/store';
-import { deletePack } from '../../packList/bll/packListReducer';
 import {
   addCard,
   deleteCard,
+  deleteCurrentCardPack,
   editCard,
-  editSelectedCardPack,
+  editCurrentCardPack,
   fetchCardList,
   setCardListParams,
 } from '../bll/cardListReducer';
@@ -38,6 +38,7 @@ export const CardList: FC = () => {
   const authUser = useAppSelector<User | null>((state) => state.profile.user);
   const packName = useAppSelector<string>((state) => state.cardList.packName);
   const packPrivate = useAppSelector<boolean>((state) => state.cardList.packPrivate);
+  const packDeleted = useAppSelector<boolean>((state) => state.cardList.packDeleted);
   const packUserId = useAppSelector<string>((state) => state.cardList.packUserId);
   const cards = useAppSelector<Card[]>((state) => state.cardList.cards);
   const cardQuestion = useAppSelector<string | undefined>(
@@ -111,7 +112,7 @@ export const CardList: FC = () => {
 
   const handleEditCardPack = (cardPackFormData: CardPackFormData) => {
     dispatch(
-      editSelectedCardPack({
+      editCurrentCardPack({
         _id: cardPackId as string,
         ...cardPackFormData,
         private: cardPackFormData.isPrivate,
@@ -120,8 +121,7 @@ export const CardList: FC = () => {
   };
 
   const handleDeleteCardPackClick = () => {
-    dispatch(deletePack(cardPackId as string));
-    navigate(PATH.PACK_LIST);
+    dispatch(deleteCurrentCardPack(cardPackId as string));
   };
 
   const handleLearnCardPack = () => {
@@ -149,6 +149,10 @@ export const CardList: FC = () => {
 
   if (!authUser) {
     return <Navigate to={PATH.LOGIN} />;
+  }
+
+  if (packDeleted) {
+    return <Navigate to={PATH.PACK_LIST} />;
   }
 
   return (
