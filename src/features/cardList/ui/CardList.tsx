@@ -27,12 +27,14 @@ import { DeleteCardModal } from './Modals/DeleteCardModal';
 import { CardPackFormModal } from '../../packList/ui/Modals/CardPackFormModal';
 import type { CardPackFormData } from '../../packList/ui/Modals/PackForm';
 import s from './CardList.module.css';
+import { DeleteCardPackModal } from '../../packList/ui/Modals/DeleteCardPackModal';
 
 export const CardList: FC = () => {
   const [showAddCardModal, setShowAddCardModal] = useState<boolean>(false);
   const [showEditCardModal, setShowEditCardModal] = useState<boolean>(false);
   const [showDeleteCardModal, setShowDeleteCardModal] = useState<boolean>(false);
   const [showEditCardPackModal, setShowEditCardPackModal] = useState<boolean>(false);
+  const [showDeleteCardPackModal, setShowDeleteCardPackModal] = useState<boolean>(false);
   const [selectedCard, setSelectedCard] = useState<Card | null>(null);
 
   const { cardPackId } = useParams<'cardPackId'>();
@@ -124,6 +126,10 @@ export const CardList: FC = () => {
   };
 
   const handleDeleteCardPackClick = () => {
+    setShowDeleteCardPackModal(true);
+  };
+
+  const handleDeleteCardPack = () => {
     dispatch(deleteCurrentCardPack(cardPackId as string));
   };
 
@@ -267,6 +273,13 @@ export const CardList: FC = () => {
         initValues={cardPackFormValues}
         onCloseModal={setShowEditCardPackModal}
         onSubmitForm={handleEditCardPack}
+      />
+      <DeleteCardPackModal
+        title={'Delete card pack'}
+        show={showDeleteCardPackModal}
+        pack={{_id: cardPackId as string, name: packName}}
+        onCloseModal={setShowDeleteCardPackModal}
+        onConfirmDelete={handleDeleteCardPack}
       />
     </>
   );

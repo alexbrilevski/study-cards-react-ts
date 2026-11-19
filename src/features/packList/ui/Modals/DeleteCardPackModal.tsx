@@ -1,12 +1,11 @@
 import type { FC } from 'react';
-import type { Pack } from '../../../../main/types/pack';
 import { ModalWindow } from '../../../../main/ui/common/components/ModalWindow/ModalWindow';
 import Button from '../../../../main/ui/common/components/Button/Button';
 
 type DeleteCardPackModalProps = {
   show: boolean;
   title: string;
-  pack: Pack;
+  pack: {_id: string, name: string};
   onCloseModal: (show: boolean) => void;
   onConfirmDelete: (id: string) => void;
 };
