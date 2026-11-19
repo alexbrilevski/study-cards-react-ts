@@ -3,6 +3,7 @@ import type { RootThunk } from '../../../main/bll/store';
 import type { Card, CardListData, CardListQueryParams } from '../../../main/types/card';
 import { handleApiRequestError } from '../../../utils/notificationUtils';
 import { cardListAPI, type NewCardData, type UpdateCardData } from '../dal/cardListApi';
+import { packListAPI, type UpdatePackRequestData } from '../../packList/dal/packListApi';
 
 // Constants
 const ACTION_TYPES = {
@@ -142,5 +143,24 @@ export const deleteCard =
       })
       .finally(() => {
         setAppIsLoading(false);
+      });
+  };
+export const editSelectedCardPack =
+  (cardsPack: UpdatePackRequestData): RootThunk =>
+  (dispatch) => {
+    dispatch(setAppIsLoading(true));
+    packListAPI
+      .updatePack(cardsPack)
+      .then((data) => {
+        const { updatedCardsPack } = data;
+        if (updatedCardsPack) {
+          dispatch(updateCardPackName(updatedCardsPack.name));
+        }
+      })
+      .catch((error) => {
+        handleApiRequestError(error, dispatch);
+      })
+      .finally(() => {
+        dispatch(setAppIsLoading(true));
       });
   };

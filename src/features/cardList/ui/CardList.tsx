@@ -3,14 +3,14 @@ import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import type { Card } from '../../../main/types/card';
 import type { User } from '../../../main/types/user';
 import { useAppDispatch, useAppSelector } from '../../../main/bll/store';
-import { deletePack, editPack } from '../../packList/bll/packListReducer';
+import { deletePack } from '../../packList/bll/packListReducer';
 import {
   addCard,
   deleteCard,
   editCard,
+  editSelectedCardPack,
   fetchCardList,
   setCardListParams,
-  updateCardPackName,
 } from '../bll/cardListReducer';
 import { useDebouncedCallback } from '../../../utils/hooks/useDebouncedCallback';
 import { PATH } from '../../../main/ui/Main/Pages';
@@ -110,9 +110,13 @@ export const CardList: FC = () => {
   };
 
   const handleEditCardPack = (cardPackFormData: CardPackFormData) => {
-    const { name, isPrivate } = cardPackFormData;
-    dispatch(updateCardPackName(cardPackFormData.name));
-    dispatch(editPack({ _id: cardPackId as string, name, private: isPrivate }));
+    dispatch(
+      editSelectedCardPack({
+        _id: cardPackId as string,
+        ...cardPackFormData,
+        private: cardPackFormData.isPrivate,
+      }),
+    );
   };
 
   const handleDeleteCardPackClick = () => {
