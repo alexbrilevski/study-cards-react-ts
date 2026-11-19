@@ -57,11 +57,9 @@ export const cardListReducer = (
     case ACTION_TYPES.SET_CARD_LIST_PARAMS: {
       return { ...state, params: { ...state.params, ...action.payload } };
     }
-    case ACTION_TYPES.UPDATE_CARD_PACK_NAME: {
-      return { ...state, ...action.payload };
-    }
+    case ACTION_TYPES.UPDATE_CARD_PACK_NAME:
     case ACTION_TYPES.SET_DELETED_CARD_PACK_STATE: {
-      return { ...state, packDeleted: true };
+      return { ...state, ...action.payload };
     }
     default: {
       return state;
@@ -76,8 +74,11 @@ export const setCardListParams = (params: Omit<CardListQueryParams, 'cardsPack_i
   ({ type: ACTION_TYPES.SET_CARD_LIST_PARAMS, payload: params }) as const;
 const updateCardPackName = (packName: string) =>
   ({ type: ACTION_TYPES.UPDATE_CARD_PACK_NAME, payload: { packName } }) as const;
-const setDeletedCardPackState = () =>
-  ({ type: ACTION_TYPES.SET_DELETED_CARD_PACK_STATE }) as const;
+export const setDeletedCardPackState = (isDeleted: boolean) =>
+  ({
+    type: ACTION_TYPES.SET_DELETED_CARD_PACK_STATE,
+    payload: { packDeleted: isDeleted },
+  }) as const;
 
 // Thunk creators
 export const fetchCardList =
@@ -181,7 +182,7 @@ export const deleteCurrentCardPack =
       .then((data) => {
         const { deletedCardsPack } = data;
         if (deletedCardsPack) {
-          dispatch(setDeletedCardPackState());
+          dispatch(setDeletedCardPackState(true));
         }
       })
       .catch((error) => {
