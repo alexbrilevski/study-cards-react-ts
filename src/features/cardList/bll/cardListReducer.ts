@@ -87,7 +87,7 @@ export const fetchCardList =
         handleApiRequestError(error, dispatch);
       })
       .finally(() => {
-        setAppIsLoading(false);
+        dispatch(setAppIsLoading(false));
       });
   };
 export const addCard =
@@ -106,7 +106,7 @@ export const addCard =
         handleApiRequestError(error, dispatch);
       })
       .finally(() => {
-        setAppIsLoading(false);
+        dispatch(setAppIsLoading(false));
       });
   };
 export const editCard =
@@ -125,7 +125,7 @@ export const editCard =
         handleApiRequestError(error, dispatch);
       })
       .finally(() => {
-        setAppIsLoading(false);
+        dispatch(setAppIsLoading(false));
       });
   };
 export const deleteCard =
@@ -142,7 +142,7 @@ export const deleteCard =
         handleApiRequestError(error, dispatch);
       })
       .finally(() => {
-        setAppIsLoading(false);
+        dispatch(setAppIsLoading(false));
       });
   };
 export const editSelectedCardPack =
