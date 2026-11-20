@@ -1,12 +1,4 @@
 import { useEffect, useRef, useState, type FC } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAppDispatch } from '../../../../bll/store';
-import {
-  deletePack,
-  editPack,
-} from '../../../../../features/packList/bll/packListReducer';
-import { PATH } from '../../../Main/Pages';
-import { updateCardPackName } from '../../../../../features/cardList/bll/cardListReducer';
 import { IconSvg } from '../IconSvg/IconSvg';
 import menuIcon from '../../../../../assets/icons/three-dots.svg';
 import editIcon from '../../../../../assets/icons/edit.svg';
@@ -15,15 +7,20 @@ import learnIcon from '../../../../../assets/icons/teacher.svg';
 import s from './CardPackMenu.module.css';
 
 type CardsPackMenuProps = {
-  cardPackId: string;
   isEmptyPack: boolean;
+  handleEditCardPack: () => void;
+  handleDeleteCardPack: () => void;
+  handleLearnCardPack: () => void;
 };
 
-export const CardPackMenu: FC<CardsPackMenuProps> = ({ cardPackId, isEmptyPack }) => {
+export const CardPackMenu: FC<CardsPackMenuProps> = ({
+  isEmptyPack,
+  handleEditCardPack,
+  handleDeleteCardPack,
+  handleLearnCardPack,
+}) => {
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
   const menuRef = useRef<HTMLDivElement>(null);
-  const dispatch = useAppDispatch();
-  const navigate = useNavigate();
 
   useEffect(() => {
     if (!isExpanded) return;
@@ -43,21 +40,14 @@ export const CardPackMenu: FC<CardsPackMenuProps> = ({ cardPackId, isEmptyPack }
     setIsExpanded((prevState) => !prevState);
   };
 
-  const handleEditPack = () => {
+  const handleEditPackClick = () => {
     setIsExpanded(false);
-    const packName = 'New pack name';
-    dispatch(updateCardPackName(packName));
-    dispatch(editPack({ _id: cardPackId, name: packName }));
+    handleEditCardPack();
   };
 
-  const handleDeletePack = () => {
+  const handleDeletePackClick = () => {
     setIsExpanded(false);
-    dispatch(deletePack(cardPackId));
-    navigate(PATH.PACK_LIST);
-  };
-
-  const handleLearnCardPack = () => {
-    navigate(`${PATH.LEARN}/${cardPackId}`);
+    handleDeleteCardPack();
   };
 
   return (
@@ -69,13 +59,13 @@ export const CardPackMenu: FC<CardsPackMenuProps> = ({ cardPackId, isEmptyPack }
         <div className={s['dropdown']}>
           <ul>
             <li>
-              <button onClick={handleEditPack}>
+              <button onClick={handleEditPackClick}>
                 <IconSvg src={editIcon} size={24} />
                 <span>Edit</span>
               </button>
             </li>
             <li>
-              <button onClick={handleDeletePack}>
+              <button onClick={handleDeletePackClick}>
                 <IconSvg src={deleteIcon} size={24} />
                 <span>Delete</span>
               </button>

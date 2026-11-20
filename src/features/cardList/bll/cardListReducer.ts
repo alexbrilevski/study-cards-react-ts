@@ -3,18 +3,21 @@ import type { RootThunk } from '../../../main/bll/store';
 import type { Card, CardListData, CardListQueryParams } from '../../../main/types/card';
 import { handleApiRequestError } from '../../../utils/notificationUtils';
 import { cardListAPI, type NewCardData, type UpdateCardData } from '../dal/cardListApi';
+import { packListAPI, type UpdatePackRequestData } from '../../packList/dal/packListApi';
 
 // Constants
 const ACTION_TYPES = {
   SET_CARD_LIST_DATA: 'card-list/SET-DATA',
   SET_CARD_LIST_PARAMS: 'card-list/SET-CARD-LIST-PARAMS',
   UPDATE_CARD_PACK_NAME: 'card-list/UPDATE-CARD-PACK-NAME',
+  SET_DELETED_CARD_PACK_STATE: 'card-list/SET-DELETED-CARD-PACK-STATE',
 } as const;
 
 export type CardListActions =
   | ReturnType<typeof setCardListData>
   | ReturnType<typeof setCardListParams>
-  | ReturnType<typeof updateCardPackName>;
+  | ReturnType<typeof updateCardPackName>
+  | ReturnType<typeof setDeletedCardPackState>;
 
 type InitState = typeof initState;
 
@@ -22,6 +25,8 @@ const initState = {
   cards: [] as Card[],
   packUserId: '',
   packName: '',
+  packPrivate: false,
+  packDeleted: false,
   cardsTotalCount: 0,
   maxGrade: 0,
   minGrade: 0,
@@ -52,7 +57,8 @@ export const cardListReducer = (
     case ACTION_TYPES.SET_CARD_LIST_PARAMS: {
       return { ...state, params: { ...state.params, ...action.payload } };
     }
-    case ACTION_TYPES.UPDATE_CARD_PACK_NAME: {
+    case ACTION_TYPES.UPDATE_CARD_PACK_NAME:
+    case ACTION_TYPES.SET_DELETED_CARD_PACK_STATE: {
       return { ...state, ...action.payload };
     }
     default: {
@@ -66,8 +72,13 @@ const setCardListData = (cardListData: CardListData) =>
   ({ type: ACTION_TYPES.SET_CARD_LIST_DATA, payload: cardListData }) as const;
 export const setCardListParams = (params: Omit<CardListQueryParams, 'cardsPack_id'>) =>
   ({ type: ACTION_TYPES.SET_CARD_LIST_PARAMS, payload: params }) as const;
-export const updateCardPackName = (packName: string) =>
+const updateCardPackName = (packName: string) =>
   ({ type: ACTION_TYPES.UPDATE_CARD_PACK_NAME, payload: { packName } }) as const;
+export const setDeletedCardPackState = (isDeleted: boolean) =>
+  ({
+    type: ACTION_TYPES.SET_DELETED_CARD_PACK_STATE,
+    payload: { packDeleted: isDeleted },
+  }) as const;
 
 // Thunk creators
 export const fetchCardList =
@@ -85,7 +96,7 @@ export const fetchCardList =
         handleApiRequestError(error, dispatch);
       })
       .finally(() => {
-        setAppIsLoading(false);
+        dispatch(setAppIsLoading(false));
       });
   };
 export const addCard =
@@ -104,7 +115,7 @@ export const addCard =
         handleApiRequestError(error, dispatch);
       })
       .finally(() => {
-        setAppIsLoading(false);
+        dispatch(setAppIsLoading(false));
       });
   };
 export const editCard =
@@ -123,7 +134,7 @@ export const editCard =
         handleApiRequestError(error, dispatch);
       })
       .finally(() => {
-        setAppIsLoading(false);
+        dispatch(setAppIsLoading(false));
       });
   };
 export const deleteCard =
@@ -140,6 +151,44 @@ export const deleteCard =
         handleApiRequestError(error, dispatch);
       })
       .finally(() => {
-        setAppIsLoading(false);
+        dispatch(setAppIsLoading(false));
+      });
+  };
+export const editCurrentCardPack =
+  (cardsPack: UpdatePackRequestData): RootThunk =>
+  (dispatch) => {
+    dispatch(setAppIsLoading(true));
+    packListAPI
+      .updatePack(cardsPack)
+      .then((data) => {
+        const { updatedCardsPack } = data;
+        if (updatedCardsPack) {
+          dispatch(updateCardPackName(updatedCardsPack.name));
+        }
+      })
+      .catch((error) => {
+        handleApiRequestError(error, dispatch);
+      })
+      .finally(() => {
+        dispatch(setAppIsLoading(true));
+      });
+  };
+export const deleteCurrentCardPack =
+  (id: string): RootThunk =>
+  (dispatch) => {
+    dispatch(setAppIsLoading(true));
+    packListAPI
+      .deletePack(id)
+      .then((data) => {
+        const { deletedCardsPack } = data;
+        if (deletedCardsPack) {
+          dispatch(setDeletedCardPackState(true));
+        }
+      })
+      .catch((error) => {
+        handleApiRequestError(error, dispatch);
+      })
+      .finally(() => {
+        dispatch(setAppIsLoading(false));
       });
   };

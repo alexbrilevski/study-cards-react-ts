@@ -16,7 +16,7 @@ export const packListAPI = {
   addPack(cardsPack: AddPackRequestData) {
     return baseInstance
       .post<{ newCardsPack: Pack }>('cards/pack', {
-        cardsPack,
+        cardsPack: {...cardsPack, private: cardsPack.isPrivate},
       })
       .then((response) => response.data);
   },
