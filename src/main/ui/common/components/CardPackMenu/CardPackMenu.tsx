@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState, type FC } from 'react';
+import { useRef, useState, type FC } from 'react';
+import { useClickOutside } from '../../../../../utils/hooks/useClickOutside';
 import { IconSvg } from '../IconSvg/IconSvg';
 import menuIcon from '../../../../../assets/icons/three-dots.svg';
 import editIcon from '../../../../../assets/icons/edit.svg';
@@ -22,19 +23,7 @@ export const CardPackMenu: FC<CardsPackMenuProps> = ({
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (!isExpanded) return;
-
-    const handlePointerDown = (e: PointerEvent) => {
-      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
-        setIsExpanded(false);
-      }
-    };
-
-    document.addEventListener('pointerdown', handlePointerDown);
-
-    return () => document.removeEventListener('pointerdown', handlePointerDown);
-  }, [isExpanded]);
+  useClickOutside(menuRef, () => setIsExpanded(false), isExpanded);
 
   const handleExpandMenu = () => {
     setIsExpanded((prevState) => !prevState);
