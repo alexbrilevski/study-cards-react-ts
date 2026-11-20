@@ -23,11 +23,10 @@ import { CardListTable } from './CardListTable/CardListTable';
 import { Pagination } from '../../../main/ui/common/components/Pagination/Pagination';
 import type { CardFormData } from './Modals/CardForm';
 import { CardFormModal } from './Modals/CardFormModal';
-import { DeleteCardModal } from './Modals/DeleteCardModal';
+import { DeleteItemModal } from '../../../main/ui/common/components/DeleteItemModal/DeleteItemModal';
 import { CardPackFormModal } from '../../packList/ui/Modals/CardPackFormModal';
 import type { CardPackFormData } from '../../packList/ui/Modals/PackForm';
 import s from './CardList.module.css';
-import { DeleteCardPackModal } from '../../packList/ui/Modals/DeleteCardPackModal';
 
 export const CardList: FC = () => {
   const [showAddCardModal, setShowAddCardModal] = useState<boolean>(false);
@@ -259,13 +258,15 @@ export const CardList: FC = () => {
         />
       )}
       {selectedCard && (
-        <DeleteCardModal
+        <DeleteItemModal
           title={'Delete card'}
           show={showDeleteCardModal}
-          card={selectedCard}
+          itemId={selectedCard._id}
           onCloseModal={setShowDeleteCardModal}
           onConfirmDelete={handleDeleteCard}
-        />
+        >
+          Do you really want to remove card <b>"{selectedCard.question}"</b>?
+        </DeleteItemModal>
       )}
       <CardPackFormModal
         title={'Edit card pack'}
@@ -274,13 +275,16 @@ export const CardList: FC = () => {
         onCloseModal={setShowEditCardPackModal}
         onSubmitForm={handleEditCardPack}
       />
-      <DeleteCardPackModal
+      <DeleteItemModal
         title={'Delete card pack'}
         show={showDeleteCardPackModal}
-        pack={{_id: cardPackId as string, name: packName}}
+        itemId={cardPackId as string}
         onCloseModal={setShowDeleteCardPackModal}
         onConfirmDelete={handleDeleteCardPack}
-      />
+      >
+        Do you really want to remove <b>{packName}</b>?<br />
+        All it's cards will be deleted as well.
+      </DeleteItemModal>
     </>
   );
 };

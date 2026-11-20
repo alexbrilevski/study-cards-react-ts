@@ -18,7 +18,7 @@ import { PackListTable } from './PackListTable/PackListTable';
 import { Pagination } from '../../../main/ui/common/components/Pagination/Pagination';
 import { CardPackFormModal } from './Modals/CardPackFormModal';
 import type { CardPackFormData } from './Modals/PackForm';
-import { DeleteCardPackModal } from './Modals/DeleteCardPackModal';
+import { DeleteItemModal } from '../../../main/ui/common/components/DeleteItemModal/DeleteItemModal';
 
 export type CardsPackListView = 'my' | 'all';
 
@@ -190,13 +190,16 @@ export const PackList = () => {
         onSubmitForm={handleEditPack}
       />
       {selectedCardPack && (
-        <DeleteCardPackModal
+        <DeleteItemModal
           show={showDeletePackModal}
           title={'Delete pack'}
-          pack={selectedCardPack}
+          itemId={selectedCardPack._id}
           onCloseModal={setShowDeletePackModal}
           onConfirmDelete={handleDeletePack}
-        />
+        >
+          Do you really want to remove <b>{selectedCardPack.name}</b>?<br />
+          All it's cards will be deleted as well.
+        </DeleteItemModal>
       )}
     </>
   );
