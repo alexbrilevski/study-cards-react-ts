@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import type { Card } from '../../../../main/types/card';
 import { useAppDispatch } from '../../../../main/bll/store';
-import { deleteCard, editCard, setCardListParams } from '../../bll/cardListReducer';
+import { setCardListParams } from '../../bll/cardListReducer';
 import { formatDate } from '../../../../utils/formatDate';
 import Button from '../../../../main/ui/common/components/Button/Button';
 import ButtonSort from '../../../../main/ui/common/components/ButtonSort/ButtonSort';
@@ -15,12 +15,16 @@ type CardListTableProps = {
   cards: Card[];
   sortCards: string;
   isAuthUserPack: boolean;
+  handleEditCardClick: (card: Card) => void;
+  handleDeleteCardClick: (card: Card) => void;
 };
 
 export const CardListTable: FC<CardListTableProps> = ({
   cards,
   sortCards,
   isAuthUserPack,
+  handleEditCardClick,
+  handleDeleteCardClick,
 }) => {
   const dispatch = useAppDispatch();
 
@@ -28,12 +32,12 @@ export const CardListTable: FC<CardListTableProps> = ({
     dispatch(setCardListParams({ sortCards }));
   };
 
-  const handleUpdateCard = (id: string) => {
-    dispatch(editCard({ _id: id, question: 'Updated question' }));
+  const handleUpdateCard = (card: Card) => {
+    handleEditCardClick(card);
   };
 
-  const handleDeleteCard = (id: string) => {
-    dispatch(deleteCard(id));
+  const handleDeleteCard = (card: Card) => {
+    handleDeleteCardClick(card);
   };
 
   return (
@@ -91,10 +95,10 @@ export const CardListTable: FC<CardListTableProps> = ({
             {isAuthUserPack && (
               <td>
                 <div className="table-actions">
-                  <Button onClick={() => handleUpdateCard(card._id)}>
+                  <Button onClick={() => handleUpdateCard(card)}>
                     <IconSvg src={editIcon} size={16} />
                   </Button>
-                  <Button onClick={() => handleDeleteCard(card._id)}>
+                  <Button onClick={() => handleDeleteCard(card)}>
                     <IconSvg src={deleteIcon} size={16} />
                   </Button>
                 </div>

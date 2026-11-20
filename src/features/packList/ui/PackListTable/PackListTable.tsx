@@ -2,7 +2,7 @@ import type { FC } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import type { Pack } from '../../../../main/types/pack';
 import { useAppDispatch } from '../../../../main/bll/store';
-import { deletePack, editPack, setPackListParams } from '../../bll/packListReducer';
+import { setPackListParams } from '../../bll/packListReducer';
 import { PATH } from '../../../../main/ui/Main/Pages';
 import { formatDate } from '../../../../utils/formatDate';
 import Button from '../../../../main/ui/common/components/Button/Button';
@@ -17,12 +17,16 @@ type PackListTableProps = {
   packs: Pack[];
   authUserId: string;
   sortPacks: string;
+  handleEditPackClick: (pack: Pack) => void;
+  handleDeletePackClick: (pack: Pack) => void;
 };
 
 export const PackListTable: FC<PackListTableProps> = ({
   packs,
   authUserId,
   sortPacks,
+  handleEditPackClick,
+  handleDeletePackClick,
 }) => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
@@ -31,12 +35,12 @@ export const PackListTable: FC<PackListTableProps> = ({
     dispatch(setPackListParams({ sortPacks }));
   };
 
-  const handleEditPack = (id: string) => {
-    dispatch(editPack({ _id: id, name: 'Edited pack', private: false }));
+  const handleEditPack = (pack: Pack) => {
+    handleEditPackClick(pack);
   };
 
-  const handleDeletePack = (id: string) => {
-    dispatch(deletePack(id));
+  const handleDeletePack = (pack: Pack) => {
+    handleDeletePackClick(pack);
   };
 
   const handleLearnCardPack = (id: string) => {
@@ -95,10 +99,10 @@ export const PackListTable: FC<PackListTableProps> = ({
                   </Button>
                   {pack.user_id === authUserId && (
                     <>
-                      <Button onClick={() => handleEditPack(pack._id)}>
+                      <Button onClick={() => handleEditPack(pack)}>
                         <IconSvg src={editIcon} size={16} />
                       </Button>
-                      <Button onClick={() => handleDeletePack(pack._id)}>
+                      <Button onClick={() => handleDeletePack(pack)}>
                         <IconSvg src={deleteIcon} size={16} />
                       </Button>
                     </>
