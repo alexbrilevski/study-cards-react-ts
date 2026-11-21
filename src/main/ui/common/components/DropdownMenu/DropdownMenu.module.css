@@ -1,7 +1,3 @@
-/*
- * Customization: set --dropdown-arrow-right on the element passed via `className`
- * to center the dropdown arrow under the trigger (defaults to 14px).
- */
 .dropdown-menu {
   position: relative;
 }

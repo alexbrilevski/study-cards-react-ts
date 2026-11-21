@@ -54,9 +54,6 @@ export const DropdownMenu: FC<DropdownMenuProps> = ({
   };
 
   const handleBlur = (e: FocusEvent<HTMLDivElement>) => {
-    // relatedTarget is null when focus goes nowhere (e.g. a click on a non-focusable
-    // area, or Safari not focusing clicked buttons) - that case is covered by
-    // useClickOutside, so only react to focus actually moving to another element.
     const nextFocused = e.relatedTarget;
     if (nextFocused && !e.currentTarget.contains(nextFocused)) {
       close();
