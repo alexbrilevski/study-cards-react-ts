@@ -173,9 +173,9 @@ export const CardList: FC = () => {
             {isAuthUserPack && (
               <CardPackMenu
                 isEmptyPack={cards.length === 0}
-                handleEditCardPack={handleEditCardPackClick}
-                handleDeleteCardPack={handleDeleteCardPackClick}
-                handleLearnCardPack={handleLearnCardPack}
+                onEdit={handleEditCardPackClick}
+                onDelete={handleDeleteCardPackClick}
+                onLearn={handleLearnCardPack}
               />
             )}
           </div>
