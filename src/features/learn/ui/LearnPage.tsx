@@ -33,7 +33,7 @@ export const LearnPage: FC = () => {
     return () => {
       setRandomCard(null);
     };
-  }, [cardPackId, isFirstLoad, cards]);
+  }, [cardPackId, isFirstLoad, cards, dispatch]);
 
   const handleGoBack = () => {
     navigate(-1);

@@ -18,7 +18,7 @@ export const NewPassword = () => {
     return () => {
       if (error) dispatch(setNewPasswordFormError(null));
     };
-  }, [error]);
+  }, [error, dispatch]);
 
   const handleSetNewPassword = (e: SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();

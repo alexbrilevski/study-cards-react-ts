@@ -20,7 +20,7 @@ export const PasswordRecoveryForm = () => {
     return () => {
       if (error) dispatch(setPasswordRecoveryFormError(null));
     };
-  }, [error]);
+  }, [error, dispatch]);
 
   const passwordRecoveryForm = useFormik({
     initialValues: {

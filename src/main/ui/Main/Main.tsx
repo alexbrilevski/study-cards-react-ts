@@ -13,7 +13,7 @@ export const Main = () => {
 
   useEffect(() => {
     dispatch(initializeApp());
-  }, []);
+  }, [dispatch]);
 
   if (!isInitialized) {
     return <Spinner />;
