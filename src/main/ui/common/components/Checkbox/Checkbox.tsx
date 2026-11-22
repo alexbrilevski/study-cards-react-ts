@@ -16,8 +16,8 @@ const Checkbox: FC<CheckboxProps> = ({
   ...restProps
 }) => {
   const onChangeCallback = (e: ChangeEvent<HTMLInputElement>) => {
-    onChange && onChange(e);
-    onChangeChecked && onChangeChecked(e.currentTarget.checked);
+    onChange?.(e);
+    onChangeChecked?.(e.currentTarget.checked);
   }
 
   const finalInputClassName = `${s['checkbox']} ${className ? className : ''}`

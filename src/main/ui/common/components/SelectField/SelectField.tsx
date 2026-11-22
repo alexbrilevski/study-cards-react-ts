@@ -10,7 +10,7 @@ type DefaultSelectProps = DetailedHTMLProps<
 
 type SelectFieldProps = DefaultSelectProps & {
   options: string[];
-  onChangeOption?: (option: any) => void;
+  onChangeOption?: (option: string) => void;
 };
 
 const SelectField: FC<SelectFieldProps> = ({
@@ -20,8 +20,8 @@ const SelectField: FC<SelectFieldProps> = ({
   ...restProps
 }) => {
   const onChangeCallback = (e: ChangeEvent<HTMLSelectElement>) => {
-    onChange && onChange(e);
-    onChangeOption && onChangeOption(e.currentTarget.value);
+    onChange?.(e);
+    onChangeOption?.(e.currentTarget.value);
   };
 
   return (
