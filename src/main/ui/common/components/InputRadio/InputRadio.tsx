@@ -29,8 +29,8 @@ const InputRadio: FC<InputRadioProps> = ({
   ...restProps
 }) => {
   const onChangeCallback = (e: ChangeEvent<HTMLInputElement>) => {
-    onChange && onChange(e);
-    onChangeOption && onChangeOption(e.currentTarget.value);
+    onChange?.(e);
+    onChangeOption?.(e.currentTarget.value);
   };
 
   const mappedOptions: ReactElement[] = options

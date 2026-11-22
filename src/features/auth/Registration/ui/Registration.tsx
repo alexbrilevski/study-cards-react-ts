@@ -14,7 +14,7 @@ export const Registration = () => {
     return () => {
       dispatch(setRegistrationSuccess(false));
     };
-  }, []);
+  }, [dispatch]);
 
   if (success) {
     return <Navigate to={PATH.LOGIN} />;

@@ -54,7 +54,7 @@ export const PackList = () => {
 
   useEffect(() => {
     dispatch(fetchPackList());
-  }, [page, pageSize, packName, user_id, min, max, sortPacks]);
+  }, [page, pageSize, packName, user_id, min, max, sortPacks, dispatch]);
 
   const handleAddPackClick = () => {
     setCardPackFormValues({ name: '', isPrivate: false });

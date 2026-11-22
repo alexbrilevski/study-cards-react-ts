@@ -55,21 +55,21 @@ const InputText: FC<InputTextProps> = ({
   };
 
   const onChangeCallback = (e: ChangeEvent<HTMLInputElement>) => {
-    onChange && onChange(e);
-    onChangeText && onChangeText(e.currentTarget.value);
+    onChange?.(e);
+    onChangeText?.(e.currentTarget.value);
   };
 
   const onKeyDownCallback = (e: KeyboardEvent<HTMLInputElement>) => {
-    onKeyDown && onKeyDown(e);
-    onEnter && e.key === 'Enter' && onEnter();
+    onKeyDown?.(e);
+    if (e.key === 'Enter') onEnter?.();
   };
 
   const onFocusCallback = (e: FocusEvent<HTMLInputElement>) => {
-    onFocus && onFocus(e);
+    onFocus?.(e);
     setIsActive(true);
   };
   const onBlurCallback = (e: FocusEvent<HTMLInputElement>) => {
-    onBlur && onBlur(e);
+    onBlur?.(e);
     setIsActive(Boolean(restProps.value));
   };
 

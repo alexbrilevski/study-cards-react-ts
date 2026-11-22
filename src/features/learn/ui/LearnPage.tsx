@@ -10,9 +10,7 @@ import ButtonBack from '../../../main/ui/common/components/ButtonBack/ButtonBack
 import { LearnCard } from './LearnCard/LearnCard';
 import s from './LearnPage.module.css';
 
-type LearnPageProps = {};
-
-export const LearnPage: FC<LearnPageProps> = () => {
+export const LearnPage: FC = () => {
   const [randomCard, setRandomCard] = useState<Card | null>(null);
   const [isFirstLoad, setIsFirstLoad] = useState<boolean>(true);
 
@@ -35,7 +33,7 @@ export const LearnPage: FC<LearnPageProps> = () => {
     return () => {
       setRandomCard(null);
     };
-  }, [cardPackId, isFirstLoad, cards]);
+  }, [cardPackId, isFirstLoad, cards, dispatch]);
 
   const handleGoBack = () => {
     navigate(-1);

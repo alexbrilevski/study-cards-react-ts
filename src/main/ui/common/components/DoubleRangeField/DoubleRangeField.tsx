@@ -64,7 +64,7 @@ const DoubleRangeField: FC<DoubleRangeFieldProps> = ({
       value = initMinValue;
     }
     setMinValue(value);
-    onChangeRange && onChangeRange([value, maxValue]);
+    onChangeRange?.([value, maxValue]);
   };
 
   const onMaxValueChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -73,7 +73,7 @@ const DoubleRangeField: FC<DoubleRangeFieldProps> = ({
       value = initMaxValue;
     }
     setMaxValue(value);
-    onChangeRange && onChangeRange([minValue, value]);
+    onChangeRange?.([minValue, value]);
   };
 
   return (

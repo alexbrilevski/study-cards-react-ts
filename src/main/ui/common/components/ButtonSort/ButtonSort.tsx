@@ -28,7 +28,7 @@ const ButtonSort: FC<ButtonSortProps> = ({
   const finalClassName = `${s['button-sort']} ${isActive && direction === '1' ? s['up'] : ''} ${className ? className : ''}`;
 
   const onClickCallback = (e: MouseEvent<HTMLButtonElement>) => {
-    onClick && onClick(e);
+    onClick?.(e);
     onSortClick(`${direction === '0' ? 1 : 0}${sortParam}`);
   };
 

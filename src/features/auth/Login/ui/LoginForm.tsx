@@ -22,7 +22,7 @@ export const LoginForm = () => {
     return () => {
       if (error) dispatch(setLoginFormError(null));
     };
-  }, [error]);
+  }, [error, dispatch]);
 
   const loginForm = useFormik({
     initialValues: {

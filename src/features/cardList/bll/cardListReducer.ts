@@ -170,7 +170,7 @@ export const editCurrentCardPack =
         handleApiRequestError(error, dispatch);
       })
       .finally(() => {
-        dispatch(setAppIsLoading(true));
+        dispatch(setAppIsLoading(false));
       });
   };
 export const deleteCurrentCardPack =
