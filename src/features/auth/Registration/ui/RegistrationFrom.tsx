@@ -20,7 +20,7 @@ export const RegistrationFrom = () => {
     return () => {
       if (error) dispatch(setRegistrationFormError(null));
     };
-  }, [error]);
+  }, [error, dispatch]);
 
   const registrationForm = useFormik({
     initialValues: {

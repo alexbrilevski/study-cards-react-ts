@@ -18,8 +18,10 @@ export const EditProfileForm: FC<EditProfileFormProps> = ({ user }) => {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    if (error) dispatch(setEditProfileFormError(null));
-  }, [error]);
+    return () => {
+      if (error) dispatch(setEditProfileFormError(null));
+    };
+  }, [error, dispatch]);
 
   const handleSaveName = (name: string) => {
     if (error) dispatch(setEditProfileFormError(null));

@@ -61,17 +61,14 @@ export const CardList: FC = () => {
 
   useEffect(() => {
     if (cardPackId) dispatch(fetchCardList(cardPackId));
-  }, [cardPackId, cardQuestion, sortCards, page, pageSize]);
+  }, [cardPackId, cardQuestion, sortCards, page, pageSize, dispatch]);
 
   useEffect(() => {
     return () => {
-      if (cardQuestion) {
-        dispatch(setCardListParams({ cardQuestion: undefined }));
-      }
-
+      dispatch(setCardListParams({ cardQuestion: undefined }));
       dispatch(setDeletedCardPackState(false));
     };
-  }, []);
+  }, [dispatch]);
 
   const handleGoBackClick = () => {
     navigate(-1);

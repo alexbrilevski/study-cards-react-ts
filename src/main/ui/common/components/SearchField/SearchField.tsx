@@ -38,8 +38,8 @@ const SearchField: FC<SearchFieldProps> = ({
   const onChangeCallback = (e: ChangeEvent<HTMLInputElement>) => {
     const currentValue = e.currentTarget.value;
     setInputvalue(currentValue);
-    onChange && onChange(e);
-    onChangeValue && onChangeValue(currentValue);
+    onChange?.(e);
+    onChangeValue?.(currentValue);
   };
 
   return (
