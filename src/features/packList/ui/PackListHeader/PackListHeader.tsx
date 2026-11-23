@@ -68,7 +68,12 @@ export const PackListHeader: FC<PackListHeaderProps> = ({
           onChangeRange={onCardsCountRangeChange}
         />
       </div>
-      <button className={s['clear-filters']} onClick={onClearFilters}>
+      <button
+        type={'button'}
+        className={s['clear-filters']}
+        aria-label={'Clear filters'}
+        onClick={onClearFilters}
+      >
         <IconSvg src={clearFiltersIcon} size={24} />
       </button>
     </div>

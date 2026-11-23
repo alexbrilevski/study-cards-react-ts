@@ -103,6 +103,7 @@ const InputText: FC<InputTextProps> = ({
           <button
             type={'button'}
             className={s['toggle-button']}
+            aria-label={inputType === 'password' ? 'Show password' : 'Hide password'}
             onClick={handleChangeInputType}
           >
             <IconSvg src={inputType === 'password' ? eyeIcon : eyeSlashIcon} size={24} />

@@ -95,10 +95,13 @@ export const CardListTable: FC<CardListTableProps> = ({
             {isAuthUserPack && (
               <td>
                 <div className="table-actions">
-                  <Button onClick={() => handleUpdateCard(card)}>
+                  <Button aria-label={'Edit card'} onClick={() => handleUpdateCard(card)}>
                     <IconSvg src={editIcon} size={16} />
                   </Button>
-                  <Button onClick={() => handleDeleteCard(card)}>
+                  <Button
+                    aria-label={'Delete card'}
+                    onClick={() => handleDeleteCard(card)}
+                  >
                     <IconSvg src={deleteIcon} size={16} />
                   </Button>
                 </div>
