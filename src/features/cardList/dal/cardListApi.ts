@@ -16,10 +16,12 @@ export type NewCardData = {
 export type UpdateCardData = { _id: string } & Partial<Omit<Card, '_id'>>;
 
 export const cardListAPI = {
-  getCards(params: CardListQueryParams) {
-    return baseInstance.get<CardListData>('cards/card', { params }).then((response) => {
-      return response.data;
-    });
+  getCards(params: CardListQueryParams, signal?: AbortSignal) {
+    return baseInstance
+      .get<CardListData>('cards/card', { params, signal })
+      .then((response) => {
+        return response.data;
+      });
   },
   addCard(cardData: NewCardData) {
     return baseInstance
