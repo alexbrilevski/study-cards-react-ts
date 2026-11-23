@@ -46,13 +46,17 @@ export const PackListHeader: FC<PackListHeaderProps> = ({
         <h2>Show cards packs</h2>
         <div className={s['pack-list-view-toggle']}>
           <button
+            type={'button'}
             className={userId ? `${s['active']}` : undefined}
+            aria-pressed={Boolean(userId)}
             onClick={() => onSelectPackListView('my')}
           >
             My
           </button>
           <button
+            type={'button'}
             className={!userId ? `${s['active']}` : undefined}
+            aria-pressed={!userId}
             onClick={() => onSelectPackListView('all')}
           >
             All
