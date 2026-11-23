@@ -75,7 +75,9 @@ export const LoginForm = () => {
         }
         {...loginForm.getFieldProps('password')}
       />
-      <Checkbox {...loginForm.getFieldProps('rememberMe')}>Remember me</Checkbox>
+      <Checkbox {...loginForm.getFieldProps({ name: 'rememberMe', type: 'checkbox' })}>
+        Remember me
+      </Checkbox>
       <div className="text-right">
         <NavLink to={PATH.PASSWORD_RECOVERY}>Forgot password?</NavLink>
       </div>
