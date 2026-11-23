@@ -2,7 +2,7 @@ import { useState, type FC } from 'react';
 import type { Card } from '../../../../main/types/card';
 import Button from '../../../../main/ui/common/components/Button/Button';
 import InputRadio from '../../../../main/ui/common/components/InputRadio/InputRadio';
-import { useAppDispatch } from '../../../../main/bll/store';
+import { useAppDispatch, useAppSelector } from '../../../../main/bll/store';
 import { updateCardGrade } from '../../bll/learnReducer';
 import s from './LearnCard.module.css';
 
@@ -21,6 +21,7 @@ const grades = [
 export const LearnCard: FC<LearnCardProps> = ({ card }) => {
   const [showAnswer, setShowAnswer] = useState<boolean>(false);
   const [grade, setGrade] = useState<string>(grades[0]);
+  const isUpdatingGrade = useAppSelector<boolean>((state) => state.app.isLoading);
   const dispatch = useAppDispatch();
 
   if (!card) {
@@ -31,9 +32,12 @@ export const LearnCard: FC<LearnCardProps> = ({ card }) => {
     setShowAnswer(true);
   };
 
-  const handleNextCardSwitch = () => {
+  const handleNextCardSwitch = async () => {
+    await dispatch(
+      updateCardGrade({ card_id: card._id, grade: grades.indexOf(grade) + 1 }),
+    );
     setShowAnswer(false);
-    dispatch(updateCardGrade({ card_id: card._id, grade: grades.indexOf(grade) + 1 }));
+    setGrade(grades[0]);
   };
 
   return (
@@ -69,6 +73,7 @@ export const LearnCard: FC<LearnCardProps> = ({ card }) => {
               variant={'contained'}
               color={'primary'}
               onClick={handleNextCardSwitch}
+              disabled={isUpdatingGrade}
             >
               Next
             </Button>

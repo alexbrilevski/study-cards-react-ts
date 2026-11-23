@@ -1,39 +1,37 @@
-import { useEffect, useState, type FC } from 'react';
+import { useEffect, type FC } from 'react';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import type { Card } from '../../../main/types/card';
 import type { User } from '../../../main/types/user';
 import { useAppDispatch, useAppSelector } from '../../../main/bll/store';
 import { fetchCardPackToLearn } from '../bll/learnReducer';
-import { getRandomCard } from '../../../utils/getRandomCard';
 import { PATH } from '../../../main/ui/Main/Pages';
 import ButtonBack from '../../../main/ui/common/components/ButtonBack/ButtonBack';
 import { LearnCard } from './LearnCard/LearnCard';
 import s from './LearnPage.module.css';
 
 export const LearnPage: FC = () => {
-  const [randomCard, setRandomCard] = useState<Card | null>(null);
-  const [isFirstLoad, setIsFirstLoad] = useState<boolean>(true);
-
   const { cardPackId } = useParams<'cardPackId'>();
   const authUser = useAppSelector<User | null>((state) => state.profile.user);
   const packName = useAppSelector<string>((state) => state.learn.cardPack.packName);
-  const cards = useAppSelector<Card[]>((state) => state.learn.cardPack.cards);
-  const isFetchingCardPack = useAppSelector<boolean>((state) => state.app.isLoading);
+  const currentCard = useAppSelector<Card | null>(
+    (state) =>
+      state.learn.cardPack.cards.find((card) => card._id === state.learn.currentCardId) ??
+      null,
+  );
+  const isFetchingCardPack = useAppSelector<boolean>(
+    (state) => state.learn.isFetchingCardPack,
+  );
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (cardPackId && isFirstLoad) {
-      dispatch(fetchCardPackToLearn(cardPackId));
-      setIsFirstLoad(false);
-    }
+    if (!cardPackId) return;
 
-    if (cards.length > 0) setRandomCard(getRandomCard(cards));
+    const controller = new AbortController();
+    dispatch(fetchCardPackToLearn(cardPackId, controller.signal));
 
-    return () => {
-      setRandomCard(null);
-    };
-  }, [cardPackId, isFirstLoad, cards, dispatch]);
+    return () => controller.abort();
+  }, [cardPackId, dispatch]);
 
   const handleGoBack = () => {
     navigate(-1);
@@ -55,7 +53,7 @@ export const LearnPage: FC = () => {
             Fetching a random card...
           </p>
         ) : (
-          <LearnCard card={randomCard} />
+          <LearnCard key={currentCard?._id} card={currentCard} />
         )}
       </div>
     </>
