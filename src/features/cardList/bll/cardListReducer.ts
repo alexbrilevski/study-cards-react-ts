@@ -89,13 +89,13 @@ export const resetCardListState = () =>
 
 // Thunk creators
 export const fetchCardList =
-  (cardsPack_id: string): RootThunk =>
+  (cardsPack_id: string, signal?: AbortSignal): RootThunk =>
   (dispatch, getState) => {
     const params = { cardsPack_id, ...getState().cardList.params };
 
     dispatch(setAppIsLoading(true));
     cardListAPI
-      .getCards(params)
+      .getCards(params, signal)
       .then((data) => {
         dispatch(setCardListData(data));
       })

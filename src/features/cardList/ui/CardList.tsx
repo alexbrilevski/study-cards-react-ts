@@ -60,7 +60,12 @@ export const CardList: FC = () => {
   let cardFormValues = null;
 
   useEffect(() => {
-    if (cardPackId) dispatch(fetchCardList(cardPackId));
+    if (!cardPackId) return;
+
+    const controller = new AbortController();
+    dispatch(fetchCardList(cardPackId, controller.signal));
+
+    return () => controller.abort();
   }, [cardPackId, cardQuestion, sortCards, page, pageSize, dispatch]);
 
   useEffect(() => {
