@@ -10,8 +10,8 @@ import {
   editCard,
   editCurrentCardPack,
   fetchCardList,
+  resetCardListState,
   setCardListParams,
-  setDeletedCardPackState,
 } from '../bll/cardListReducer';
 import { useDebouncedCallback } from '../../../utils/hooks/useDebouncedCallback';
 import { PATH } from '../../../main/ui/Main/Pages';
@@ -65,8 +65,7 @@ export const CardList: FC = () => {
 
   useEffect(() => {
     return () => {
-      dispatch(setCardListParams({ cardQuestion: undefined }));
-      dispatch(setDeletedCardPackState(false));
+      dispatch(resetCardListState());
     };
   }, [dispatch]);
 

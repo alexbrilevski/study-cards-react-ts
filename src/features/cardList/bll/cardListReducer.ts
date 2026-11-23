@@ -11,13 +11,15 @@ const ACTION_TYPES = {
   SET_CARD_LIST_PARAMS: 'card-list/SET-CARD-LIST-PARAMS',
   UPDATE_CARD_PACK_NAME: 'card-list/UPDATE-CARD-PACK-NAME',
   SET_DELETED_CARD_PACK_STATE: 'card-list/SET-DELETED-CARD-PACK-STATE',
+  RESET_CARD_LIST_STATE: 'card-list/RESET-CARD-LIST-STATE',
 } as const;
 
 export type CardListActions =
   | ReturnType<typeof setCardListData>
   | ReturnType<typeof setCardListParams>
   | ReturnType<typeof updateCardPackName>
-  | ReturnType<typeof setDeletedCardPackState>;
+  | ReturnType<typeof setDeletedCardPackState>
+  | ReturnType<typeof resetCardListState>;
 
 type InitState = typeof initState;
 
@@ -61,6 +63,9 @@ export const cardListReducer = (
     case ACTION_TYPES.SET_DELETED_CARD_PACK_STATE: {
       return { ...state, ...action.payload };
     }
+    case ACTION_TYPES.RESET_CARD_LIST_STATE: {
+      return initState;
+    }
     default: {
       return state;
     }
@@ -79,6 +84,8 @@ export const setDeletedCardPackState = (isDeleted: boolean) =>
     type: ACTION_TYPES.SET_DELETED_CARD_PACK_STATE,
     payload: { packDeleted: isDeleted },
   }) as const;
+export const resetCardListState = () =>
+  ({ type: ACTION_TYPES.RESET_CARD_LIST_STATE }) as const;
 
 // Thunk creators
 export const fetchCardList =
