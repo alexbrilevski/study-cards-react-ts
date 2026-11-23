@@ -8,9 +8,9 @@ export type AddPackRequestData = { name: string; deckCover?: string; isPrivate: 
 export type UpdatePackRequestData = { _id: string } & Partial<Omit<Pack, '_id'>>;
 
 export const packListAPI = {
-  getPacks(params: PackListQueryParams) {
+  getPacks(params: PackListQueryParams, signal?: AbortSignal) {
     return baseInstance
-      .get<GetPacksResponseData>('cards/pack', { params })
+      .get<GetPacksResponseData>('cards/pack', { params, signal })
       .then((response) => response.data);
   },
   addPack(cardsPack: AddPackRequestData) {
