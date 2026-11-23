@@ -62,9 +62,9 @@ export const PackListHeader: FC<PackListHeaderProps> = ({
       <div className={s['cards-range-filter']}>
         <h2>Number of cards</h2>
         <DoubleRangeField
-          min={min}
-          max={max}
-          rangeValues={[minCardsCount, maxCardsCount]}
+          value={[min, max]}
+          min={minCardsCount}
+          max={maxCardsCount}
           onChangeRange={onCardsCountRangeChange}
         />
       </div>
