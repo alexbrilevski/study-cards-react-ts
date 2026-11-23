@@ -68,6 +68,7 @@ export const EditableText: FC<EditableTextProps> = ({
           <span className={s['current-text']}>{text}</span>
           <button
             className={`${s['action-button']} ${s['edit-button']}`}
+            aria-label={inputLabel ? `Edit ${inputLabel}` : 'Edit'}
             onClick={handleEditClick}
             disabled={disabled}
           >

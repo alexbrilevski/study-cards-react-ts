@@ -64,6 +64,8 @@ const DoubleRangeField: FC<DoubleRangeFieldProps> = ({
         value={minValue}
         min={min}
         max={max}
+        disabled={disabled}
+        aria-label={'Minimum value'}
         onChange={onMinValueChange}
       />
       <div className={s['double-range']}>
@@ -75,6 +77,7 @@ const DoubleRangeField: FC<DoubleRangeFieldProps> = ({
         <input
           type={'range'}
           value={minValue}
+          aria-label={'Minimum value'}
           onChange={onMinValueChange}
           className={s['double-range-thumb']}
           style={{ zIndex: minValue === maxValue && minValue !== 0 ? 1 : 0 }}
@@ -86,6 +89,7 @@ const DoubleRangeField: FC<DoubleRangeFieldProps> = ({
         <input
           type={'range'}
           value={maxValue}
+          aria-label={'Maximum value'}
           onChange={onMaxValueChange}
           className={s['double-range-thumb']}
           min={min}
@@ -100,6 +104,8 @@ const DoubleRangeField: FC<DoubleRangeFieldProps> = ({
         value={maxValue}
         min={min}
         max={max}
+        disabled={disabled}
+        aria-label={'Maximum value'}
         onChange={onMaxValueChange}
       />
     </div>

@@ -39,7 +39,11 @@ export const EditProfileForm: FC<EditProfileFormProps> = ({ user }) => {
           width="96"
           height="96"
         />
-        <button className={s['upload-photo-button']}>
+        <button
+          type={'button'}
+          className={s['upload-photo-button']}
+          aria-label={'Change photo'}
+        >
           <IconSvg src={photoIcon} size={18} />
         </button>
       </div>

@@ -46,13 +46,17 @@ export const PackListHeader: FC<PackListHeaderProps> = ({
         <h2>Show cards packs</h2>
         <div className={s['pack-list-view-toggle']}>
           <button
+            type={'button'}
             className={userId ? `${s['active']}` : undefined}
+            aria-pressed={Boolean(userId)}
             onClick={() => onSelectPackListView('my')}
           >
             My
           </button>
           <button
+            type={'button'}
             className={!userId ? `${s['active']}` : undefined}
+            aria-pressed={!userId}
             onClick={() => onSelectPackListView('all')}
           >
             All
@@ -68,7 +72,12 @@ export const PackListHeader: FC<PackListHeaderProps> = ({
           onChangeRange={onCardsCountRangeChange}
         />
       </div>
-      <button className={s['clear-filters']} onClick={onClearFilters}>
+      <button
+        type={'button'}
+        className={s['clear-filters']}
+        aria-label={'Clear filters'}
+        onClick={onClearFilters}
+      >
         <IconSvg src={clearFiltersIcon} size={24} />
       </button>
     </div>
