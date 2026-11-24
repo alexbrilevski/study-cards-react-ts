@@ -1,6 +1,5 @@
 import { useEffect, type FC } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import type { Card } from '../../../main/types/card';
 import { useAppDispatch, useAppSelector } from '../../../main/bll/store';
 import { fetchCardPackToLearn } from '../bll/learnReducer';
 import ButtonBack from '../../../main/ui/common/components/ButtonBack/ButtonBack';
@@ -9,15 +8,13 @@ import s from './LearnPage.module.css';
 
 export const LearnPage: FC = () => {
   const { cardPackId } = useParams<'cardPackId'>();
-  const packName = useAppSelector<string>((state) => state.learn.cardPack.packName);
-  const currentCard = useAppSelector<Card | null>(
+  const packName = useAppSelector((state) => state.learn.cardPack.packName);
+  const currentCard = useAppSelector(
     (state) =>
       state.learn.cardPack.cards.find((card) => card._id === state.learn.currentCardId) ??
       null,
   );
-  const isFetchingCardPack = useAppSelector<boolean>(
-    (state) => state.learn.isFetchingCardPack,
-  );
+  const isFetchingCardPack = useAppSelector((state) => state.learn.isFetchingCardPack);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 

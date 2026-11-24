@@ -1,7 +1,6 @@
 import { useEffect, useState, type FC } from 'react';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import type { Card } from '../../../main/types/card';
-import type { User } from '../../../main/types/user';
 import { useAppDispatch, useAppSelector } from '../../../main/bll/store';
 import {
   addCard,
@@ -37,21 +36,17 @@ export const CardList: FC = () => {
   const [selectedCard, setSelectedCard] = useState<Card | null>(null);
 
   const { cardPackId } = useParams<'cardPackId'>();
-  const authUser = useAppSelector<User | null>((state) => state.profile.user);
-  const packName = useAppSelector<string>((state) => state.cardList.packName);
-  const packPrivate = useAppSelector<boolean>((state) => state.cardList.packPrivate);
-  const packDeleted = useAppSelector<boolean>((state) => state.cardList.packDeleted);
-  const packUserId = useAppSelector<string>((state) => state.cardList.packUserId);
-  const cards = useAppSelector<Card[]>((state) => state.cardList.cards);
-  const cardQuestion = useAppSelector<string | undefined>(
-    (state) => state.cardList.params.cardQuestion,
-  );
-  const sortCards = useAppSelector<string>((state) => state.cardList.params.sortCards);
-  const page = useAppSelector<number>((state) => state.cardList.params.page);
-  const pageSize = useAppSelector<number>((state) => state.cardList.params.pageCount);
-  const cardsTotalCount = useAppSelector<number>(
-    (state) => state.cardList.cardsTotalCount,
-  );
+  const authUser = useAppSelector((state) => state.profile.user);
+  const packName = useAppSelector((state) => state.cardList.packName);
+  const packPrivate = useAppSelector((state) => state.cardList.packPrivate);
+  const packDeleted = useAppSelector((state) => state.cardList.packDeleted);
+  const packUserId = useAppSelector((state) => state.cardList.packUserId);
+  const cards = useAppSelector((state) => state.cardList.cards);
+  const cardQuestion = useAppSelector((state) => state.cardList.params.cardQuestion);
+  const sortCards = useAppSelector((state) => state.cardList.params.sortCards);
+  const page = useAppSelector((state) => state.cardList.params.page);
+  const pageSize = useAppSelector((state) => state.cardList.params.pageCount);
+  const cardsTotalCount = useAppSelector((state) => state.cardList.cardsTotalCount);
   const isAuthUserPack = packUserId === authUser?._id;
   const dispatch = useAppDispatch();
   const navigate = useNavigate();

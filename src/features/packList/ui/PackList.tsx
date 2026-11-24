@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../../main/bll/store';
 import { useDebouncedCallback } from '../../../utils/hooks/useDebouncedCallback';
-import type { User } from '../../../main/types/user';
 import type { Pack } from '../../../main/types/pack';
 import {
   addPack,
@@ -30,24 +29,18 @@ export const PackList = () => {
     isPrivate: false,
   });
 
-  const authUser = useAppSelector<User | null>((state) => state.profile.user);
-  const cardPacks = useAppSelector<Pack[]>((state) => state.packList.cardPacks);
-  const minCardsCount = useAppSelector<number>((state) => state.packList.minCardsCount);
-  const maxCardsCount = useAppSelector<number>((state) => state.packList.maxCardsCount);
-  const min = useAppSelector<number | undefined>((state) => state.packList.params.min);
-  const max = useAppSelector<number | undefined>((state) => state.packList.params.max);
-  const packName = useAppSelector<string | undefined>(
-    (state) => state.packList.params.packName,
-  );
-  const user_id = useAppSelector<string | undefined>(
-    (state) => state.packList.params.user_id,
-  );
-  const sortPacks = useAppSelector<string>((state) => state.packList.params.sortPacks);
-  const page = useAppSelector<number>((state) => state.packList.params.page);
-  const pageSize = useAppSelector<number>((state) => state.packList.params.pageCount);
-  const totalPacksCount = useAppSelector<number>(
-    (state) => state.packList.cardPacksTotalCount,
-  );
+  const authUser = useAppSelector((state) => state.profile.user);
+  const cardPacks = useAppSelector((state) => state.packList.cardPacks);
+  const minCardsCount = useAppSelector((state) => state.packList.minCardsCount);
+  const maxCardsCount = useAppSelector((state) => state.packList.maxCardsCount);
+  const min = useAppSelector((state) => state.packList.params.min);
+  const max = useAppSelector((state) => state.packList.params.max);
+  const packName = useAppSelector((state) => state.packList.params.packName);
+  const user_id = useAppSelector((state) => state.packList.params.user_id);
+  const sortPacks = useAppSelector((state) => state.packList.params.sortPacks);
+  const page = useAppSelector((state) => state.packList.params.page);
+  const pageSize = useAppSelector((state) => state.packList.params.pageCount);
+  const totalPacksCount = useAppSelector((state) => state.packList.cardPacksTotalCount);
   const dispatch = useAppDispatch();
 
   useEffect(() => {

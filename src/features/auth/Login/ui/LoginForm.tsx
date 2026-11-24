@@ -15,7 +15,7 @@ type LoginFormErrors = {
 };
 
 export const LoginForm = () => {
-  const error = useAppSelector<string | null>((state) => state.login.error);
+  const error = useAppSelector((state) => state.login.error);
   const dispatch = useAppDispatch();
 
   useEffect(() => {

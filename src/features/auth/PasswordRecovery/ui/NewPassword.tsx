@@ -9,8 +9,8 @@ import Button from '../../../../main/ui/common/components/Button/Button';
 
 export const NewPassword = () => {
   const [password, setPassword] = useState<string>('');
-  const success = useAppSelector<boolean>((state) => state.newPassword.success);
-  const error = useAppSelector<string | null>((state) => state.newPassword.error);
+  const success = useAppSelector((state) => state.newPassword.success);
+  const error = useAppSelector((state) => state.newPassword.error);
   const dispatch = useAppDispatch();
   const { token } = useParams<{ token: string }>();
 

@@ -5,9 +5,7 @@ import { Logo } from '../../../../main/ui/common/components/Logo/Logo';
 import { PasswordRecoveryForm } from './PasswordRecoveryForm';
 
 export const PasswordRecovery = () => {
-  const recoveryEmail = useAppSelector<string>(
-    (state) => state.passwordRecovery.recoveryEmail,
-  );
+  const recoveryEmail = useAppSelector((state) => state.passwordRecovery.recoveryEmail);
 
   if (recoveryEmail) {
     return <Navigate to={PATH.PASSWORD_RECOVERY_CONFIRM} replace />;

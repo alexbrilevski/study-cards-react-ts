@@ -13,8 +13,8 @@ type EditProfileFormProps = {
 };
 
 export const EditProfileForm: FC<EditProfileFormProps> = ({ user }) => {
-  const isLoading = useAppSelector<boolean>((state) => state.app.isLoading);
-  const error = useAppSelector<string | null>((state) => state.profile.error);
+  const isLoading = useAppSelector((state) => state.app.isLoading);
+  const error = useAppSelector((state) => state.profile.error);
   const dispatch = useAppDispatch();
 
   useEffect(() => {

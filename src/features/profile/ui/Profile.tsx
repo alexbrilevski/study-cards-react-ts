@@ -1,4 +1,3 @@
-import type { User } from '../../../main/types/user';
 import { useAppDispatch, useAppSelector } from '../../../main/bll/store';
 import { logout } from '../../auth/Login/bll/loginReducer';
 import { useNavigate } from 'react-router-dom';
@@ -10,7 +9,7 @@ import { IconSvg } from '../../../main/ui/common/components/IconSvg/IconSvg';
 import logoutIcon from '../../../assets/icons/logout.svg';
 
 export const Profile = () => {
-  const user = useAppSelector<User | null>((state) => state.profile.user);
+  const user = useAppSelector((state) => state.profile.user);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
