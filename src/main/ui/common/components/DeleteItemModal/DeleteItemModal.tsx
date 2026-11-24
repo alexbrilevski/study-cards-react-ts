@@ -7,7 +7,7 @@ type DeleteItemModalProps = PropsWithChildren<{
   itemId: string;
   show: boolean;
   onConfirmDelete: (id: string) => void;
-  onCloseModal: (show: boolean) => void;
+  onCloseModal: () => void;
 }>;
 
 export const DeleteItemModal: FC<DeleteItemModalProps> = ({
@@ -20,11 +20,11 @@ export const DeleteItemModal: FC<DeleteItemModalProps> = ({
 }) => {
   const handleConfirmDelete = () => {
     onConfirmDelete(itemId);
-    onCloseModal(false);
+    onCloseModal();
   };
 
   const handleCloseModal = () => {
-    onCloseModal(false);
+    onCloseModal();
   };
 
   return (
