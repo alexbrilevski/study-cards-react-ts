@@ -19,15 +19,14 @@ import { DeleteItemModal } from '../../../main/ui/common/components/DeleteItemMo
 
 export type CardsPackListView = 'my' | 'all';
 
+type PackListModal =
+  | { type: 'add' }
+  | { type: 'edit'; pack: Pack }
+  | { type: 'delete'; pack: Pack }
+  | null;
+
 export const PackList = () => {
-  const [showAddPackModal, setShowAddPackModal] = useState<boolean>(false);
-  const [showEditPackModal, setShowEditPackModal] = useState<boolean>(false);
-  const [showDeletePackModal, setShowDeletePackModal] = useState<boolean>(false);
-  const [selectedCardPack, setSelectedCardPack] = useState<Pack | null>(null);
-  const [cardPackFormValues, setCardPackFormValues] = useState<CardPackFormData>({
-    name: '',
-    isPrivate: false,
-  });
+  const [modal, setModal] = useState<PackListModal>(null);
 
   const authUser = useAppSelector((state) => state.profile.user);
   const cardPacks = useAppSelector((state) => state.packList.cardPacks);
@@ -50,9 +49,12 @@ export const PackList = () => {
     return () => controller.abort();
   }, [page, pageSize, packName, user_id, min, max, sortPacks, dispatch]);
 
+  const handleCloseModal = () => {
+    setModal(null);
+  };
+
   const handleAddPackClick = () => {
-    setCardPackFormValues({ name: '', isPrivate: false });
-    setShowAddPackModal(true);
+    setModal({ type: 'add' });
   };
 
   const handleAddNewPack = (cardPack: CardPackFormData) => {
@@ -60,32 +62,27 @@ export const PackList = () => {
   };
 
   const handleEditPackClick = (pack: Pack) => {
-    setSelectedCardPack(pack);
-    setCardPackFormValues({ name: pack.name, isPrivate: pack.private });
-    setShowEditPackModal(true);
+    setModal({ type: 'edit', pack });
   };
 
   const handleEditPack = (cardPackData: CardPackFormData) => {
-    if (selectedCardPack) {
-      dispatch(
-        editPack({
-          _id: selectedCardPack._id,
-          ...cardPackData,
-          private: cardPackData.isPrivate,
-        }),
-      );
-    }
+    if (modal?.type !== 'edit') return;
+
+    dispatch(
+      editPack({
+        _id: modal.pack._id,
+        ...cardPackData,
+        private: cardPackData.isPrivate,
+      }),
+    );
   };
 
   const handleDeletePackClick = (pack: Pack) => {
-    setSelectedCardPack(pack);
-    setShowDeletePackModal(true);
+    setModal({ type: 'delete', pack });
   };
 
-  const handleDeletePack = () => {
-    if (selectedCardPack) {
-      dispatch(deletePack(selectedCardPack._id));
-    }
+  const handleDeletePack = (id: string) => {
+    dispatch(deletePack(id));
   };
 
   const setPackNameSearchParam = useDebouncedCallback((packName: string) => {
@@ -135,12 +132,12 @@ export const PackList = () => {
       </div>
       <>
         <PackListHeader
-          packName={packName !== undefined ? packName : ''}
-          min={min !== undefined ? min : minCardsCount}
-          max={max !== undefined ? max : maxCardsCount}
+          packName={packName ?? ''}
+          min={min ?? minCardsCount}
+          max={max ?? maxCardsCount}
           minCardsCount={minCardsCount}
           maxCardsCount={maxCardsCount}
-          userId={user_id !== undefined ? user_id : ''}
+          userId={user_id ?? ''}
           onSearchByPackName={setPackNameSearchParam}
           onSelectPackListView={setPackListView}
           onCardsCountRangeChange={setCardsCountRange}
@@ -171,27 +168,29 @@ export const PackList = () => {
         )}
       </>
       <CardPackFormModal
-        show={showAddPackModal}
+        show={modal?.type === 'add'}
         title={'Add new pack'}
-        onCloseModal={setShowAddPackModal}
+        onCloseModal={handleCloseModal}
         onSubmitForm={handleAddNewPack}
       />
-      <CardPackFormModal
-        show={showEditPackModal}
-        title={'Edit pack'}
-        initValues={cardPackFormValues}
-        onCloseModal={setShowEditPackModal}
-        onSubmitForm={handleEditPack}
-      />
-      {selectedCardPack && (
+      {modal?.type === 'edit' && (
+        <CardPackFormModal
+          show
+          title={'Edit pack'}
+          initValues={{ name: modal.pack.name, isPrivate: modal.pack.private }}
+          onCloseModal={handleCloseModal}
+          onSubmitForm={handleEditPack}
+        />
+      )}
+      {modal?.type === 'delete' && (
         <DeleteItemModal
-          show={showDeletePackModal}
+          show
           title={'Delete pack'}
-          itemId={selectedCardPack._id}
-          onCloseModal={setShowDeletePackModal}
+          itemId={modal.pack._id}
+          onCloseModal={handleCloseModal}
           onConfirmDelete={handleDeletePack}
         >
-          Do you really want to remove <b>{selectedCardPack.name}</b>?<br />
+          Do you really want to remove <b>{modal.pack.name}</b>?<br />
           All it's cards will be deleted as well.
         </DeleteItemModal>
       )}
