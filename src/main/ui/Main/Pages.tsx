@@ -38,9 +38,9 @@ const CardList = lazy(() =>
 const LearnPage = lazy(() =>
   import('../../../features/learn/ui/LearnPage').then((m) => ({ default: m.LearnPage })),
 );
-const Test = lazy(() =>
-  import('../../../features/test/Test').then((m) => ({ default: m.Test })),
-);
+const Test = import.meta.env.DEV
+  ? lazy(() => import('../../../features/test/Test').then((m) => ({ default: m.Test })))
+  : null;
 
 export const PATH = {
   LOGIN: '/login',
@@ -75,7 +75,7 @@ export const Pages = () => {
           <Route path={PATH.CARD_LIST + '/:cardPackId'} element={<CardList />} />
           <Route path={PATH.LEARN + '/:cardPackId'} element={<LearnPage />} />
         </Route>
-        <Route path={PATH.TEST} element={<Test />} />
+        {Test && <Route path={PATH.TEST} element={<Test />} />}
         <Route path={PATH.ERROR404} element={<Error404 />} />
         <Route path={'*'} element={<Navigate to={PATH.ERROR404} replace />} />
       </Routes>
