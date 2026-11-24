@@ -1,7 +1,7 @@
 import { Navigate, NavLink, useLocation, type Location } from 'react-router-dom';
 import { useAppSelector } from '../../../../main/bll/store';
 import type { User } from '../../../../main/types/user';
-import { PATH } from '../../../../main/ui/Main/Pages';
+import { PATH } from '../../../../main/ui/Main/paths';
 import { Logo } from '../../../../main/ui/common/components/Logo/Logo';
 import { LoginForm } from './LoginForm';
 

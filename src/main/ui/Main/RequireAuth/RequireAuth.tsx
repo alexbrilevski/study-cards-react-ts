@@ -1,7 +1,7 @@
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { useAppSelector } from '../../../bll/store';
 import type { User } from '../../../types/user';
-import { PATH } from '../Pages';
+import { PATH } from '../paths';
 
 export const RequireAuth = () => {
   const authUser = useAppSelector<User | null>((state) => state.profile.user);

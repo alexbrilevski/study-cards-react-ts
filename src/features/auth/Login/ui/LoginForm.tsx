@@ -3,7 +3,7 @@ import { useFormik } from 'formik';
 import { NavLink } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../../../main/bll/store';
 import { login, setLoginFormError } from '../bll/loginReducer';
-import { PATH } from '../../../../main/ui/Main/Pages';
+import { PATH } from '../../../../main/ui/Main/paths';
 import InputText from '../../../../main/ui/common/components/InputText/InputText';
 import Checkbox from '../../../../main/ui/common/components/Checkbox/Checkbox';
 import Button from '../../../../main/ui/common/components/Button/Button';

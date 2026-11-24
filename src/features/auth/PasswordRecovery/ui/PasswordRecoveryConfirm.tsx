@@ -1,7 +1,7 @@
 import { Navigate, useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../../../main/bll/store';
 import { setRecoveryEmail } from '../bll/passwordRecoveryReducer';
-import { PATH } from '../../../../main/ui/Main/Pages';
+import { PATH } from '../../../../main/ui/Main/paths';
 import { Logo } from '../../../../main/ui/common/components/Logo/Logo';
 import checkEmailImg from '../../../../assets/images/check-email.svg';
 import Button from '../../../../main/ui/common/components/Button/Button';

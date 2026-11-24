@@ -1,6 +1,6 @@
 import { Navigate, NavLink } from 'react-router-dom';
 import { useAppSelector } from '../../../../main/bll/store';
-import { PATH } from '../../../../main/ui/Main/Pages';
+import { PATH } from '../../../../main/ui/Main/paths';
 import { Logo } from '../../../../main/ui/common/components/Logo/Logo';
 import { PasswordRecoveryForm } from './PasswordRecoveryForm';
 

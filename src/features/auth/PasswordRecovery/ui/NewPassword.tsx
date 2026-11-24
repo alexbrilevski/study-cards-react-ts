@@ -2,7 +2,7 @@ import { useEffect, useState, type SubmitEvent } from 'react';
 import { Navigate, useParams } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../../../main/bll/store';
 import { setNewPassword, setNewPasswordFormError } from '../bll/newPasswordReducer';
-import { PATH } from '../../../../main/ui/Main/Pages';
+import { PATH } from '../../../../main/ui/Main/paths';
 import { Logo } from '../../../../main/ui/common/components/Logo/Logo';
 import InputText from '../../../../main/ui/common/components/InputText/InputText';
 import Button from '../../../../main/ui/common/components/Button/Button';

@@ -2,6 +2,7 @@ import { lazy, Suspense } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { Error404 } from './pages/Error404/Error404';
 import { RequireAuth } from './RequireAuth/RequireAuth';
+import { PATH } from './paths';
 
 const Login = lazy(() =>
   import('../../../features/auth/Login/ui/Login').then((m) => ({ default: m.Login })),
@@ -41,20 +42,6 @@ const LearnPage = lazy(() =>
 const Test = import.meta.env.DEV
   ? lazy(() => import('../../../features/test/Test').then((m) => ({ default: m.Test })))
   : null;
-
-export const PATH = {
-  LOGIN: '/login',
-  REGISTRATION: '/registration',
-  PROFILE: '/profile',
-  PASSWORD_RECOVERY: '/password-recovery',
-  PASSWORD_RECOVERY_CONFIRM: '/password-recovery-confirm',
-  CREATE_NEW_PASSWORD: '/create-new-password',
-  PACK_LIST: '/packs',
-  CARD_LIST: '/cards',
-  LEARN: '/learn',
-  TEST: '/test',
-  ERROR404: '/error-404',
-};
 
 export const Pages = () => {
   return (
