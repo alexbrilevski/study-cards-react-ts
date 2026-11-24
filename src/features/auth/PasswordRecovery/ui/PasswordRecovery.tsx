@@ -10,7 +10,7 @@ export const PasswordRecovery = () => {
   );
 
   if (recoveryEmail) {
-    return <Navigate to={PATH.PASSWORD_RECOVERY_CONFIRM} />;
+    return <Navigate to={PATH.PASSWORD_RECOVERY_CONFIRM} replace />;
   }
 
   return (

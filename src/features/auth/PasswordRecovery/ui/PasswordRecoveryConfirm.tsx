@@ -19,7 +19,7 @@ export const PasswordRecoveryConfirm = () => {
   };
 
   if (!recoveryEmail) {
-    return <Navigate to={PATH.PASSWORD_RECOVERY} />;
+    return <Navigate to={PATH.PASSWORD_RECOVERY} replace />;
   }
 
   return (

@@ -17,7 +17,7 @@ export const Registration = () => {
   }, [dispatch]);
 
   if (success) {
-    return <Navigate to={PATH.LOGIN} />;
+    return <Navigate to={PATH.LOGIN} replace />;
   }
 
   return (

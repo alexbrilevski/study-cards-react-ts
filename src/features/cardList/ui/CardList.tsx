@@ -157,7 +157,7 @@ export const CardList: FC = () => {
   }
 
   if (packDeleted) {
-    return <Navigate to={PATH.PACK_LIST} />;
+    return <Navigate to={PATH.PACK_LIST} replace />;
   }
 
   return (

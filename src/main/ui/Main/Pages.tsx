@@ -29,7 +29,7 @@ export const PATH = {
 export const Pages = () => {
   return (
     <Routes>
-      <Route path={'/'} element={<Navigate to={PATH.LOGIN} />} />
+      <Route path={'/'} element={<Navigate to={PATH.LOGIN} replace />} />
       <Route path={PATH.LOGIN} element={<Login />} />
       <Route path={PATH.REGISTRATION} element={<Registration />} />
       <Route path={PATH.PASSWORD_RECOVERY} element={<PasswordRecovery />} />
@@ -46,7 +46,7 @@ export const Pages = () => {
       </Route>
       <Route path={PATH.TEST} element={<Test />} />
       <Route path={PATH.ERROR404} element={<Error404 />} />
-      <Route path={'*'} element={<Navigate to={PATH.ERROR404} />} />
+      <Route path={'*'} element={<Navigate to={PATH.ERROR404} replace />} />
     </Routes>
   );
 };
