@@ -27,13 +27,16 @@ import { CardPackFormModal } from '../../packList/ui/Modals/CardPackFormModal';
 import type { CardPackFormData } from '../../packList/ui/Modals/PackForm';
 import s from './CardList.module.css';
 
+type CardListModal =
+  | { type: 'add-card' }
+  | { type: 'edit-card'; card: Card }
+  | { type: 'delete-card'; card: Card }
+  | { type: 'edit-pack' }
+  | { type: 'delete-pack' }
+  | null;
+
 export const CardList: FC = () => {
-  const [showAddCardModal, setShowAddCardModal] = useState<boolean>(false);
-  const [showEditCardModal, setShowEditCardModal] = useState<boolean>(false);
-  const [showDeleteCardModal, setShowDeleteCardModal] = useState<boolean>(false);
-  const [showEditCardPackModal, setShowEditCardPackModal] = useState<boolean>(false);
-  const [showDeleteCardPackModal, setShowDeleteCardPackModal] = useState<boolean>(false);
-  const [selectedCard, setSelectedCard] = useState<Card | null>(null);
+  const [modal, setModal] = useState<CardListModal>(null);
 
   const { cardPackId } = useParams<'cardPackId'>();
   const authUser = useAppSelector((state) => state.profile.user);
@@ -52,7 +55,6 @@ export const CardList: FC = () => {
   const navigate = useNavigate();
 
   const cardPackFormValues = { name: packName, isPrivate: packPrivate };
-  let cardFormValues = null;
 
   useEffect(() => {
     if (!cardPackId) return;
@@ -73,8 +75,12 @@ export const CardList: FC = () => {
     navigate(-1);
   };
 
+  const handleCloseModal = () => {
+    setModal(null);
+  };
+
   const handleAddCardClick = () => {
-    setShowAddCardModal(true);
+    setModal({ type: 'add-card' });
   };
 
   const handleAddCard = (cardFormData: CardFormData) => {
@@ -87,19 +93,17 @@ export const CardList: FC = () => {
   };
 
   const handleEditCardClick = (card: Card) => {
-    setSelectedCard(card);
-    setShowEditCardModal(true);
+    setModal({ type: 'edit-card', card });
   };
 
   const handleEditCard = (cardFormData: CardFormData) => {
-    if (selectedCard) {
-      dispatch(editCard({ _id: selectedCard._id, ...cardFormData }));
-    }
+    if (modal?.type !== 'edit-card') return;
+
+    dispatch(editCard({ _id: modal.card._id, ...cardFormData }));
   };
 
   const handleDeleteCardClick = (card: Card) => {
-    setSelectedCard(card);
-    setShowDeleteCardModal(true);
+    setModal({ type: 'delete-card', card });
   };
 
   const handleDeleteCard = (id: string) => {
@@ -107,7 +111,7 @@ export const CardList: FC = () => {
   };
 
   const handleEditCardPackClick = () => {
-    setShowEditCardPackModal(true);
+    setModal({ type: 'edit-pack' });
   };
 
   const handleEditCardPack = (cardPackFormData: CardPackFormData) => {
@@ -121,7 +125,7 @@ export const CardList: FC = () => {
   };
 
   const handleDeleteCardPackClick = () => {
-    setShowDeleteCardPackModal(true);
+    setModal({ type: 'delete-pack' });
   };
 
   const handleDeleteCardPack = () => {
@@ -143,13 +147,6 @@ export const CardList: FC = () => {
   const setCardListPageSize = (pageSize: number) => {
     dispatch(setCardListParams({ pageCount: pageSize }));
   };
-
-  if (selectedCard) {
-    cardFormValues = {
-      question: selectedCard.question,
-      answer: selectedCard.answer,
-    };
-  }
 
   if (packDeleted) {
     return <Navigate to={PATH.PACK_LIST} replace />;
@@ -236,42 +233,42 @@ export const CardList: FC = () => {
       )}
       <CardFormModal
         title={'Add new card'}
-        show={showAddCardModal}
-        onCloseModal={setShowAddCardModal}
+        show={modal?.type === 'add-card'}
+        onCloseModal={handleCloseModal}
         onSubmitForm={handleAddCard}
       />
-      {cardFormValues && (
+      {modal?.type === 'edit-card' && (
         <CardFormModal
           title={'Edit card'}
-          show={showEditCardModal}
-          initValues={cardFormValues}
-          onCloseModal={setShowEditCardModal}
+          show
+          initValues={{ question: modal.card.question, answer: modal.card.answer }}
+          onCloseModal={handleCloseModal}
           onSubmitForm={handleEditCard}
         />
       )}
-      {selectedCard && (
+      {modal?.type === 'delete-card' && (
         <DeleteItemModal
           title={'Delete card'}
-          show={showDeleteCardModal}
-          itemId={selectedCard._id}
-          onCloseModal={setShowDeleteCardModal}
+          show
+          itemId={modal.card._id}
+          onCloseModal={handleCloseModal}
           onConfirmDelete={handleDeleteCard}
         >
-          Do you really want to remove card <b>"{selectedCard.question}"</b>?
+          Do you really want to remove card <b>"{modal.card.question}"</b>?
         </DeleteItemModal>
       )}
       <CardPackFormModal
         title={'Edit card pack'}
-        show={showEditCardPackModal}
+        show={modal?.type === 'edit-pack'}
         initValues={cardPackFormValues}
-        onCloseModal={setShowEditCardPackModal}
+        onCloseModal={handleCloseModal}
         onSubmitForm={handleEditCardPack}
       />
       <DeleteItemModal
         title={'Delete card pack'}
-        show={showDeleteCardPackModal}
+        show={modal?.type === 'delete-pack'}
         itemId={cardPackId as string}
-        onCloseModal={setShowDeleteCardPackModal}
+        onCloseModal={handleCloseModal}
         onConfirmDelete={handleDeleteCardPack}
       >
         Do you really want to remove <b>{packName}</b>?<br />
