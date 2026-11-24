@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../../main/bll/store';
 import { useDebouncedCallback } from '../../../utils/hooks/useDebouncedCallback';
+import { PATH } from '../../../main/ui/Main/paths';
 import type { Pack } from '../../../main/types/pack';
 import {
   addPack,
@@ -41,6 +43,7 @@ export const PackList = () => {
   const pageSize = useAppSelector((state) => state.packList.params.pageCount);
   const totalPacksCount = useAppSelector((state) => state.packList.cardPacksTotalCount);
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const controller = new AbortController();
@@ -59,6 +62,10 @@ export const PackList = () => {
 
   const handleAddNewPack = (cardPack: CardPackFormData) => {
     dispatch(addPack(cardPack));
+  };
+
+  const handleLearnPackClick = (pack: Pack) => {
+    navigate(`${PATH.LEARN}/${pack._id}`);
   };
 
   const handleEditPackClick = (pack: Pack) => {
@@ -108,6 +115,10 @@ export const PackList = () => {
     );
   };
 
+  const setPackListSorting = (sortPacks: string) => {
+    dispatch(setPackListParams({ sortPacks }));
+  };
+
   const handlePageChange = (pageNumber: number) => {
     dispatch(setPackListParams({ page: pageNumber }));
   };
@@ -149,8 +160,10 @@ export const PackList = () => {
               packs={cardPacks}
               authUserId={authUser._id}
               sortPacks={sortPacks}
-              handleEditPackClick={handleEditPackClick}
-              handleDeletePackClick={handleDeletePackClick}
+              onSortChange={setPackListSorting}
+              onLearn={handleLearnPackClick}
+              onEdit={handleEditPackClick}
+              onDelete={handleDeletePackClick}
             />
             <Pagination
               currentPage={page}

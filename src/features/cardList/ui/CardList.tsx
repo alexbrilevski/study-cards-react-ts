@@ -151,6 +151,10 @@ const CardListPage: FC<CardListPageProps> = ({ cardPackId }) => {
     dispatch(setCardListParams({ cardQuestion: value }));
   }, 500);
 
+  const setCardListSorting = (sortCards: string) => {
+    dispatch(setCardListParams({ sortCards }));
+  };
+
   const setCardListPage = (page: number) => {
     dispatch(setCardListParams({ page }));
   };
@@ -214,8 +218,9 @@ const CardListPage: FC<CardListPageProps> = ({ cardPackId }) => {
             cards={cards}
             sortCards={sortCards}
             isAuthUserPack={isAuthUserPack}
-            handleEditCardClick={handleEditCardClick}
-            handleDeleteCardClick={handleDeleteCardClick}
+            onSortChange={setCardListSorting}
+            onEdit={handleEditCardClick}
+            onDelete={handleDeleteCardClick}
           />
           <Pagination
             currentPage={page}
