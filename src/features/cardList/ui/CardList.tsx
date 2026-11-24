@@ -36,9 +36,22 @@ type CardListModal =
   | null;
 
 export const CardList: FC = () => {
+  const { cardPackId } = useParams<'cardPackId'>();
+
+  if (!cardPackId) {
+    return <Navigate to={PATH.PACK_LIST} replace />;
+  }
+
+  return <CardListPage key={cardPackId} cardPackId={cardPackId} />;
+};
+
+type CardListPageProps = {
+  cardPackId: string;
+};
+
+const CardListPage: FC<CardListPageProps> = ({ cardPackId }) => {
   const [modal, setModal] = useState<CardListModal>(null);
 
-  const { cardPackId } = useParams<'cardPackId'>();
   const authUser = useAppSelector((state) => state.profile.user);
   const packName = useAppSelector((state) => state.cardList.packName);
   const packPrivate = useAppSelector((state) => state.cardList.packPrivate);
@@ -57,8 +70,6 @@ export const CardList: FC = () => {
   const cardPackFormValues = { name: packName, isPrivate: packPrivate };
 
   useEffect(() => {
-    if (!cardPackId) return;
-
     const controller = new AbortController();
     dispatch(fetchCardList(cardPackId, controller.signal));
 
@@ -86,7 +97,7 @@ export const CardList: FC = () => {
   const handleAddCard = (cardFormData: CardFormData) => {
     dispatch(
       addCard({
-        cardsPack_id: cardPackId as string,
+        cardsPack_id: cardPackId,
         ...cardFormData,
       }),
     );
@@ -117,7 +128,7 @@ export const CardList: FC = () => {
   const handleEditCardPack = (cardPackFormData: CardPackFormData) => {
     dispatch(
       editCurrentCardPack({
-        _id: cardPackId as string,
+        _id: cardPackId,
         ...cardPackFormData,
         private: cardPackFormData.isPrivate,
       }),
@@ -129,7 +140,7 @@ export const CardList: FC = () => {
   };
 
   const handleDeleteCardPack = () => {
-    dispatch(deleteCurrentCardPack(cardPackId as string));
+    dispatch(deleteCurrentCardPack(cardPackId));
   };
 
   const handleLearnCardPack = () => {
@@ -267,7 +278,7 @@ export const CardList: FC = () => {
       <DeleteItemModal
         title={'Delete card pack'}
         show={modal?.type === 'delete-pack'}
-        itemId={cardPackId as string}
+        itemId={cardPackId}
         onCloseModal={handleCloseModal}
         onConfirmDelete={handleDeleteCardPack}
       >
