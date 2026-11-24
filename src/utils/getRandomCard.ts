@@ -1,15 +1,16 @@
 import type { Card } from '../main/types/card';
 
-export const getRandomCard = (cards: Array<Card>): Card => {
-  const sum = cards.reduce((acc, card) => acc + (6 - card.grade) ** 2, 0);
-  const randomNumber = Math.random() * sum;
-  let s = 0;
-  let i = 0;
+export const getRandomCard = (cards: Array<Card>): Card | null => {
+  if (cards.length === 0) return null;
 
-  while (s < randomNumber) {
-    s += (6 - cards[i].grade) ** 2;
-    i++;
+  const getWeight = (card: Card) => (6 - card.grade) ** 2;
+  const sum = cards.reduce((acc, card) => acc + getWeight(card), 0);
+  let randomNumber = Math.random() * sum;
+
+  for (const card of cards) {
+    randomNumber -= getWeight(card);
+    if (randomNumber < 0) return card;
   }
 
-  return cards[i - 1];
+  return cards[cards.length - 1];
 };

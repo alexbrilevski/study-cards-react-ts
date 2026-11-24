@@ -94,15 +94,24 @@ export const PackListTable: FC<PackListTableProps> = ({
               <td>{pack.user_name}</td>
               <td>
                 <div className="table-actions">
-                  <Button onClick={() => handleLearnCardPack(pack._id)}>
+                  <Button
+                    aria-label={`Learn ${pack.name}`}
+                    onClick={() => handleLearnCardPack(pack._id)}
+                  >
                     <IconSvg src={learnIcon} size={16} />
                   </Button>
                   {pack.user_id === authUserId && (
                     <>
-                      <Button onClick={() => handleEditPack(pack)}>
+                      <Button
+                        aria-label={`Edit ${pack.name}`}
+                        onClick={() => handleEditPack(pack)}
+                      >
                         <IconSvg src={editIcon} size={16} />
                       </Button>
-                      <Button onClick={() => handleDeletePack(pack)}>
+                      <Button
+                        aria-label={`Delete ${pack.name}`}
+                        onClick={() => handleDeletePack(pack)}
+                      >
                         <IconSvg src={deleteIcon} size={16} />
                       </Button>
                     </>

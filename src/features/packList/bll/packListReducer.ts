@@ -77,22 +77,24 @@ export const setPackListParams = (params: PackListQueryParams) =>
   ({ type: ACTION_TYPES.SET_PACK_LIST_PARAMS, payload: params }) as const;
 
 // Thunk creators
-export const fetchPackList = (): RootThunk => (dispatch, getState) => {
-  const params = getState().packList.params;
+export const fetchPackList =
+  (signal?: AbortSignal): RootThunk =>
+  (dispatch, getState) => {
+    const params = getState().packList.params;
 
-  dispatch(setAppIsLoading(true));
-  packListAPI
-    .getPacks(params)
-    .then((data) => {
-      dispatch(setPackListData(data));
-    })
-    .catch((error) => {
-      handleApiRequestError(error, dispatch);
-    })
-    .finally(() => {
-      dispatch(setAppIsLoading(false));
-    });
-};
+    dispatch(setAppIsLoading(true));
+    packListAPI
+      .getPacks(params, signal)
+      .then((data) => {
+        dispatch(setPackListData(data));
+      })
+      .catch((error) => {
+        handleApiRequestError(error, dispatch);
+      })
+      .finally(() => {
+        dispatch(setAppIsLoading(false));
+      });
+  };
 export const addPack =
   (cardsPack: AddPackRequestData): RootThunk =>
   (dispatch) => {

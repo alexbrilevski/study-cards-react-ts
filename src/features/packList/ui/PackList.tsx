@@ -53,7 +53,10 @@ export const PackList = () => {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    dispatch(fetchPackList());
+    const controller = new AbortController();
+    dispatch(fetchPackList(controller.signal));
+
+    return () => controller.abort();
   }, [page, pageSize, packName, user_id, min, max, sortPacks, dispatch]);
 
   const handleAddPackClick = () => {

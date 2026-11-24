@@ -49,8 +49,12 @@ export const Pagination: FC<PaginationPropsType> = ({
   const lastPage = paginationRange[paginationRange.length - 1];
 
   return (
-    <div className={s['pagination']}>
-      <button onClick={onPreviousClick} disabled={currentPage === 1}>
+    <nav className={s['pagination']} aria-label={'Pagination'}>
+      <button
+        aria-label={'Previous page'}
+        onClick={onPreviousClick}
+        disabled={currentPage === 1}
+      >
         <IconSvg src={chevronLeft} size={8} />
       </button>
 
@@ -63,6 +67,7 @@ export const Pagination: FC<PaginationPropsType> = ({
               ) : (
                 <button
                   className={pageNumber === currentPage ? s['selected-page'] : undefined}
+                  aria-current={pageNumber === currentPage ? 'page' : undefined}
                   onClick={() => onPageChange(pageNumber)}
                 >
                   {pageNumber}
@@ -73,7 +78,11 @@ export const Pagination: FC<PaginationPropsType> = ({
         })}
       </ul>
 
-      <button onClick={onNextClick} disabled={currentPage === lastPage}>
+      <button
+        aria-label={'Next page'}
+        onClick={onNextClick}
+        disabled={currentPage === lastPage}
+      >
         <IconSvg src={chevronRight} size={8} />
       </button>
 
@@ -82,10 +91,11 @@ export const Pagination: FC<PaginationPropsType> = ({
         <SelectField
           options={['5', '10', '15', '20']}
           value={pageSize}
+          aria-label={'Items per page'}
           onChange={onPageSizeSelect}
         />
         <span>items per page</span>
       </div>
-    </div>
+    </nav>
   );
 };

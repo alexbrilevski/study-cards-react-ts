@@ -17,7 +17,7 @@ export const Snackbar: FC<SnackbarProps> = ({ notification }) => {
     return () => {
       clearTimeout(timeout_ID);
     }
-  }, [dispatch]);
+  }, [notification, dispatch]);
 
   return (
     <div className={`${s['snackbar']} ${s[notification.type]}`}>

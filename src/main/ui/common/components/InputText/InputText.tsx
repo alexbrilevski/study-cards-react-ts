@@ -1,4 +1,5 @@
 import {
+  useId,
   useState,
   type ChangeEvent,
   type DetailedHTMLProps,
@@ -41,7 +42,9 @@ const InputText: FC<InputTextProps> = ({
   ...restProps
 }) => {
   const [inputType, setInputType] = useState<string | undefined>(type);
-  const [isActive, setIsActive] = useState<boolean>(Boolean(restProps.value));
+  const [isFocused, setIsFocused] = useState<boolean>(false);
+  const inputId = useId();
+  const isActive = isFocused || Boolean(restProps.value);
   const isPasswordInput = type === 'password';
 
   const handleChangeInputType = () => {
@@ -66,21 +69,20 @@ const InputText: FC<InputTextProps> = ({
 
   const onFocusCallback = (e: FocusEvent<HTMLInputElement>) => {
     onFocus?.(e);
-    setIsActive(true);
+    setIsFocused(true);
   };
   const onBlurCallback = (e: FocusEvent<HTMLInputElement>) => {
     onBlur?.(e);
-    setIsActive(Boolean(restProps.value));
+    setIsFocused(false);
   };
 
-  const inputId = `${name ? name : undefined}`;
   const finalLabelClassName = `${s['label']} ${isActive ? s['active'] : ''}`;
   const finalInputClassName = `${s['input']} ${error ? s['input-error'] : ''} ${className ? className : ''}`;
   const finalSpanClassName = `${s['error']} ${spanClassName ? spanClassName : ''}`;
 
   return (
     <div className={s['form-group']}>
-      {label && inputId && (
+      {label && (
         <label htmlFor={inputId} className={finalLabelClassName}>
           {label}
         </label>
@@ -88,6 +90,7 @@ const InputText: FC<InputTextProps> = ({
       <div className={s['form-control']}>
         <input
           id={inputId}
+          name={name}
           type={inputType}
           onChange={onChangeCallback}
           onKeyDown={onKeyDownCallback}
@@ -100,6 +103,7 @@ const InputText: FC<InputTextProps> = ({
           <button
             type={'button'}
             className={s['toggle-button']}
+            aria-label={inputType === 'password' ? 'Show password' : 'Hide password'}
             onClick={handleChangeInputType}
           >
             <IconSvg src={inputType === 'password' ? eyeIcon : eyeSlashIcon} size={24} />

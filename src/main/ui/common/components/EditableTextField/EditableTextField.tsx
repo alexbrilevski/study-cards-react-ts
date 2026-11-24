@@ -8,7 +8,6 @@ type EditableTextProps = {
   text: string;
   inputLabel?: string;
   inputName?: string;
-  error?: string;
   disabled?: boolean;
   onSave: (text: string) => void;
 };
@@ -17,16 +16,22 @@ export const EditableText: FC<EditableTextProps> = ({
   text,
   inputLabel,
   inputName,
-  error,
   disabled,
   onSave,
 }) => {
   const [value, setValue] = useState<string>(text);
-  const [inputError, setInputError] = useState<string | undefined>(error);
+  const [inputError, setInputError] = useState<string>('');
   const [editMode, setEditMode] = useState<boolean>(false);
 
   const handleEditClick = () => {
+    setValue(text);
+    setInputError('');
     setEditMode(true);
+  };
+
+  const handleChangeText = (newText: string) => {
+    setValue(newText);
+    setInputError('');
   };
 
   const handleSaveText = () => {
@@ -35,7 +40,6 @@ export const EditableText: FC<EditableTextProps> = ({
       return;
     }
 
-    if (error) setInputError('');
     setEditMode(false);
     onSave(value);
   };
@@ -49,7 +53,7 @@ export const EditableText: FC<EditableTextProps> = ({
             name={inputName}
             value={value}
             error={inputError}
-            onChangeText={setValue}
+            onChangeText={handleChangeText}
           />
           <button
             className={`${s['action-button']} ${s['save-button']}`}
@@ -61,9 +65,10 @@ export const EditableText: FC<EditableTextProps> = ({
         </>
       ) : (
         <>
-          <span className={s['current-text']}>{value}</span>
+          <span className={s['current-text']}>{text}</span>
           <button
             className={`${s['action-button']} ${s['edit-button']}`}
+            aria-label={inputLabel ? `Edit ${inputLabel}` : 'Edit'}
             onClick={handleEditClick}
             disabled={disabled}
           >

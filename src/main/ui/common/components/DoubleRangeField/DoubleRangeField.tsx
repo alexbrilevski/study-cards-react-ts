@@ -1,55 +1,35 @@
-import {
-  useEffect,
-  useState,
-  type ChangeEvent,
-  type DetailedHTMLProps,
-  type FC,
-  type InputHTMLAttributes,
-} from 'react';
+import { useState, type ChangeEvent, type FC } from 'react';
 import s from './DoubleRangeField.module.css';
 
-type DefaultInputProps = DetailedHTMLProps<
-  InputHTMLAttributes<HTMLInputElement>,
-  HTMLInputElement
->;
-
-type DoubleRangeFieldProps = DefaultInputProps & {
-  onChangeRange?: (value: [number, number]) => void;
-  rangeValues?: [number, number];
+type DoubleRangeFieldProps = {
+  value: [number, number];
   min?: number;
   max?: number;
   step?: number;
   disabled?: boolean;
+  onChangeRange?: (value: [number, number]) => void;
 };
 
 const DoubleRangeField: FC<DoubleRangeFieldProps> = ({
-  type,
   value,
-  rangeValues,
-  onChange,
-  onChangeRange,
-  min,
-  max,
-  step,
+  min = 0,
+  max = 100,
+  step = 1,
   disabled,
-  ...restProps
+  onChangeRange,
 }) => {
-  const initMin = min ? min : 0;
-  const initMax = max ? max : 100;
-  const stepValue = step ? step : 1;
-  const initMinValue = rangeValues ? rangeValues[0] : initMin;
-  const initMaxValue = rangeValues ? rangeValues[1] : initMax;
+  const [minValue, setMinValue] = useState(value[0]);
+  const [maxValue, setMaxValue] = useState(value[1]);
+  const [prevValue, setPrevValue] = useState(value);
 
-  const [minValue, setMinValue] = useState(initMinValue);
-  const [maxValue, setMaxValue] = useState(initMaxValue);
-
-  useEffect(() => {
-    setMinValue(min as number);
-    setMaxValue(max as number);
-  }, [min, max]);
+  if (value[0] !== prevValue[0] || value[1] !== prevValue[1]) {
+    setPrevValue(value);
+    setMinValue(value[0]);
+    setMaxValue(value[1]);
+  }
 
   const getPercent = (value: number) =>
-    Math.round(((value - initMinValue) / (initMaxValue - initMinValue)) * 100);
+    max === min ? 0 : Math.round(((value - min) / (max - min)) * 100);
 
   const setRangeFill = (minVal: number, maxVal: number) => {
     const minPercent = getPercent(minVal);
@@ -60,8 +40,8 @@ const DoubleRangeField: FC<DoubleRangeFieldProps> = ({
 
   const onMinValueChange = (e: ChangeEvent<HTMLInputElement>) => {
     let value = Math.min(+e.currentTarget.value, maxValue);
-    if (value < initMinValue) {
-      value = initMinValue;
+    if (value < min) {
+      value = min;
     }
     setMinValue(value);
     onChangeRange?.([value, maxValue]);
@@ -69,8 +49,8 @@ const DoubleRangeField: FC<DoubleRangeFieldProps> = ({
 
   const onMaxValueChange = (e: ChangeEvent<HTMLInputElement>) => {
     let value = Math.max(+e.currentTarget.value, minValue);
-    if (value > initMaxValue) {
-      value = initMaxValue;
+    if (value > max) {
+      value = max;
     }
     setMaxValue(value);
     onChangeRange?.([minValue, value]);
@@ -82,8 +62,10 @@ const DoubleRangeField: FC<DoubleRangeFieldProps> = ({
         className={s['double-range-input']}
         type={'number'}
         value={minValue}
-        min={initMinValue}
-        max={initMaxValue}
+        min={min}
+        max={max}
+        disabled={disabled}
+        aria-label={'Minimum value'}
         onChange={onMinValueChange}
       />
       <div className={s['double-range']}>
@@ -95,33 +77,35 @@ const DoubleRangeField: FC<DoubleRangeFieldProps> = ({
         <input
           type={'range'}
           value={minValue}
+          aria-label={'Minimum value'}
           onChange={onMinValueChange}
           className={s['double-range-thumb']}
           style={{ zIndex: minValue === maxValue && minValue !== 0 ? 1 : 0 }}
-          min={initMinValue}
-          max={initMaxValue}
-          step={stepValue}
+          min={min}
+          max={max}
+          step={step}
           disabled={disabled}
-          {...restProps}
         />
         <input
           type={'range'}
           value={maxValue}
+          aria-label={'Maximum value'}
           onChange={onMaxValueChange}
           className={s['double-range-thumb']}
-          min={initMinValue}
-          max={initMaxValue}
-          step={stepValue}
+          min={min}
+          max={max}
+          step={step}
           disabled={disabled}
-          {...restProps}
         />
       </div>
       <input
         className={s['double-range-input']}
         type={'number'}
         value={maxValue}
-        min={initMinValue}
-        max={initMaxValue}
+        min={min}
+        max={max}
+        disabled={disabled}
+        aria-label={'Maximum value'}
         onChange={onMaxValueChange}
       />
     </div>

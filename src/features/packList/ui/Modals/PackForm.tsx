@@ -46,10 +46,7 @@ export const PackForm: FC<PackFormProps> = ({ initValues, onSave, onCancel }) =>
         error={packForm.errors.name && packForm.touched.name ? packForm.errors.name : ''}
         {...packForm.getFieldProps('name')}
       />
-      <Checkbox
-        checked={packForm.values.isPrivate}
-        {...packForm.getFieldProps('isPrivate')}
-      >
+      <Checkbox {...packForm.getFieldProps({ name: 'isPrivate', type: 'checkbox' })}>
         Private pack
       </Checkbox>
       <div className="modal-actions">
