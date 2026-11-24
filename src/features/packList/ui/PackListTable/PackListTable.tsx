@@ -3,7 +3,7 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import type { Pack } from '../../../../main/types/pack';
 import { useAppDispatch } from '../../../../main/bll/store';
 import { setPackListParams } from '../../bll/packListReducer';
-import { PATH } from '../../../../main/ui/Main/Pages';
+import { PATH } from '../../../../main/ui/Main/paths';
 import { formatDate } from '../../../../utils/formatDate';
 import Button from '../../../../main/ui/common/components/Button/Button';
 import ButtonSort from '../../../../main/ui/common/components/ButtonSort/ButtonSort';

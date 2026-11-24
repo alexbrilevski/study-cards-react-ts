@@ -14,7 +14,7 @@ import {
   setCardListParams,
 } from '../bll/cardListReducer';
 import { useDebouncedCallback } from '../../../utils/hooks/useDebouncedCallback';
-import { PATH } from '../../../main/ui/Main/Pages';
+import { PATH } from '../../../main/ui/Main/paths';
 import ButtonBack from '../../../main/ui/common/components/ButtonBack/ButtonBack';
 import Button from '../../../main/ui/common/components/Button/Button';
 import SearchField from '../../../main/ui/common/components/SearchField/SearchField';
@@ -156,12 +156,8 @@ export const CardList: FC = () => {
     };
   }
 
-  if (!authUser) {
-    return <Navigate to={PATH.LOGIN} />;
-  }
-
   if (packDeleted) {
-    return <Navigate to={PATH.PACK_LIST} />;
+    return <Navigate to={PATH.PACK_LIST} replace />;
   }
 
   return (
