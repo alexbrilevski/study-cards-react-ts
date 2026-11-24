@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { Navigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../../main/bll/store';
 import { useDebouncedCallback } from '../../../utils/hooks/useDebouncedCallback';
 import type { User } from '../../../main/types/user';
@@ -11,7 +10,6 @@ import {
   fetchPackList,
   setPackListParams,
 } from '../bll/packListReducer';
-import { PATH } from '../../../main/ui/Main/Pages';
 import Button from '../../../main/ui/common/components/Button/Button';
 import { PackListHeader } from './PackListHeader/PackListHeader';
 import { PackListTable } from './PackListTable/PackListTable';
@@ -129,7 +127,7 @@ export const PackList = () => {
   };
 
   if (!authUser) {
-    return <Navigate to={PATH.LOGIN} />;
+    return null;
   }
 
   return (

@@ -1,7 +1,7 @@
 import type { User } from '../../../main/types/user';
 import { useAppDispatch, useAppSelector } from '../../../main/bll/store';
 import { logout } from '../../auth/Login/bll/loginReducer';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { PATH } from '../../../main/ui/Main/Pages';
 import { EditProfileForm } from './EditProfileForm';
 import ButtonBack from '../../../main/ui/common/components/ButtonBack/ButtonBack';
@@ -23,7 +23,7 @@ export const Profile = () => {
   };
 
   if (!user) {
-    return <Navigate to={'/'} />;
+    return null;
   }
 
   return (

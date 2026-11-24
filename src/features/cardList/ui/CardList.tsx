@@ -156,10 +156,6 @@ export const CardList: FC = () => {
     };
   }
 
-  if (!authUser) {
-    return <Navigate to={PATH.LOGIN} />;
-  }
-
   if (packDeleted) {
     return <Navigate to={PATH.PACK_LIST} />;
   }

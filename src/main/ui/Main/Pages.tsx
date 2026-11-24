@@ -10,6 +10,7 @@ import { CardList } from '../../../features/cardList/ui/CardList';
 import { LearnPage } from '../../../features/learn/ui/LearnPage';
 import { Test } from '../../../features/test/Test';
 import { Error404 } from './pages/Error404/Error404';
+import { RequireAuth } from './RequireAuth/RequireAuth';
 
 export const PATH = {
   LOGIN: '/login',
@@ -31,16 +32,18 @@ export const Pages = () => {
       <Route path={'/'} element={<Navigate to={PATH.LOGIN} />} />
       <Route path={PATH.LOGIN} element={<Login />} />
       <Route path={PATH.REGISTRATION} element={<Registration />} />
-      <Route path={PATH.PROFILE} element={<Profile />} />
       <Route path={PATH.PASSWORD_RECOVERY} element={<PasswordRecovery />} />
       <Route
         path={PATH.PASSWORD_RECOVERY_CONFIRM}
         element={<PasswordRecoveryConfirm />}
       />
       <Route path={PATH.CREATE_NEW_PASSWORD + '/:token'} element={<NewPassword />} />
-      <Route path={PATH.PACK_LIST} element={<PackList />} />
-      <Route path={PATH.CARD_LIST + '/:cardPackId'} element={<CardList />} />
-      <Route path={PATH.LEARN + '/:cardPackId'} element={<LearnPage />} />
+      <Route element={<RequireAuth />}>
+        <Route path={PATH.PROFILE} element={<Profile />} />
+        <Route path={PATH.PACK_LIST} element={<PackList />} />
+        <Route path={PATH.CARD_LIST + '/:cardPackId'} element={<CardList />} />
+        <Route path={PATH.LEARN + '/:cardPackId'} element={<LearnPage />} />
+      </Route>
       <Route path={PATH.TEST} element={<Test />} />
       <Route path={PATH.ERROR404} element={<Error404 />} />
       <Route path={'*'} element={<Navigate to={PATH.ERROR404} />} />
