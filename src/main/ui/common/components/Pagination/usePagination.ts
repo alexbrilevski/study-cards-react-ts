@@ -25,7 +25,7 @@ export const usePagination: UsePagination = ({
 }) => {
   return useMemo(() => {
     const totalPageCount = Math.ceil(totalCount / pageSize);
-    const totalPageNumbers = siblingCount + 5;
+    const totalPageNumbers = 2 * siblingCount + 5;
 
     if (totalPageNumbers >= totalPageCount) {
       return range(1, totalPageCount);
