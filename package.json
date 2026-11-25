@@ -2,7 +2,7 @@
   "name": "study-cards",
   "homepage": "https://alexbrilevski.github.io/study-cards",
   "private": true,
-  "version": "0.9.4",
+  "version": "0.9.5",
   "type": "module",
   "scripts": {
     "dev": "vite",
