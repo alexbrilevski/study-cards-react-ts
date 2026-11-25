@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../bll/store';
-import { initializeApp, type AppNotification } from '../../bll/appReducer';
+import { initializeApp } from '../../bll/appReducer';
 import { Header } from './Header/Header';
 import { Pages } from './Pages';
 import { Spinner } from '../common/components/Spinner/Spinner';
@@ -9,8 +9,8 @@ import { Snackbar } from '../common/components/Snackbar/Snackbar';
 import { ErrorBoundary } from '../common/components/ErrorBoundary/ErrorBoundary';
 
 export const Main = () => {
-  const isInitialized = useAppSelector<boolean>(state => state.app.isInitialized);
-  const notification = useAppSelector<AppNotification | null>(state => state.app.notification);
+  const isInitialized = useAppSelector(state => state.app.isInitialized);
+  const notification = useAppSelector(state => state.app.notification);
   const dispatch = useAppDispatch();
   const location = useLocation();
 

@@ -13,7 +13,7 @@ type PasswordRecoveryFormError = {
 };
 
 export const PasswordRecoveryForm = () => {
-  const error = useAppSelector<string | null>((state) => state.passwordRecovery.error);
+  const error = useAppSelector((state) => state.passwordRecovery.error);
   const dispatch = useAppDispatch();
 
   useEffect(() => {

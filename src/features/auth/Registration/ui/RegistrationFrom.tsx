@@ -12,8 +12,8 @@ type RegistrationFormErrors = {
 };
 
 export const RegistrationFrom = () => {
-  const isLoading = useAppSelector<boolean>((state) => state.app.isLoading);
-  const error = useAppSelector<string | null>((state) => state.registration.error);
+  const isLoading = useAppSelector((state) => state.app.isLoading);
+  const error = useAppSelector((state) => state.registration.error);
   const dispatch = useAppDispatch();
 
   useEffect(() => {

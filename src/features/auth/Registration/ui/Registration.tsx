@@ -7,7 +7,7 @@ import { Logo } from '../../../../main/ui/common/components/Logo/Logo';
 import { RegistrationFrom } from './RegistrationFrom';
 
 export const Registration = () => {
-  const success = useAppSelector<boolean>((state) => state.registration.success);
+  const success = useAppSelector((state) => state.registration.success);
   const dispatch = useAppDispatch();
 
   useEffect(() => {

@@ -6,7 +6,7 @@ type CardPackFormModalProps = {
   show: boolean;
   title: string;
   initValues?: CardPackFormData;
-  onCloseModal: (show: boolean) => void;
+  onCloseModal: () => void;
   onSubmitForm: (cardPackData: CardPackFormData) => void;
 };
 
@@ -19,11 +19,11 @@ export const CardPackFormModal: FC<CardPackFormModalProps> = ({
 }) => {
   const handleSubmitForm = (cardPackData: CardPackFormData) => {
     onSubmitForm(cardPackData);
-    onCloseModal(false);
+    onCloseModal();
   };
 
   const handleCloseModal = () => {
-    onCloseModal(false);
+    onCloseModal();
   };
 
   return (

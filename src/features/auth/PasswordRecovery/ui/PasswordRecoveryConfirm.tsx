@@ -7,9 +7,7 @@ import checkEmailImg from '../../../../assets/images/check-email.svg';
 import Button from '../../../../main/ui/common/components/Button/Button';
 
 export const PasswordRecoveryConfirm = () => {
-  const recoveryEmail = useAppSelector<string>(
-    (state) => state.passwordRecovery.recoveryEmail,
-  );
+  const recoveryEmail = useAppSelector((state) => state.passwordRecovery.recoveryEmail);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 

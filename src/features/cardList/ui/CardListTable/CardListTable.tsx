@@ -1,7 +1,5 @@
 import type { FC } from 'react';
 import type { Card } from '../../../../main/types/card';
-import { useAppDispatch } from '../../../../main/bll/store';
-import { setCardListParams } from '../../bll/cardListReducer';
 import { formatDate } from '../../../../utils/formatDate';
 import Button from '../../../../main/ui/common/components/Button/Button';
 import ButtonSort from '../../../../main/ui/common/components/ButtonSort/ButtonSort';
@@ -15,31 +13,19 @@ type CardListTableProps = {
   cards: Card[];
   sortCards: string;
   isAuthUserPack: boolean;
-  handleEditCardClick: (card: Card) => void;
-  handleDeleteCardClick: (card: Card) => void;
+  onSortChange: (sortCards: string) => void;
+  onEdit: (card: Card) => void;
+  onDelete: (card: Card) => void;
 };
 
 export const CardListTable: FC<CardListTableProps> = ({
   cards,
   sortCards,
   isAuthUserPack,
-  handleEditCardClick,
-  handleDeleteCardClick,
+  onSortChange,
+  onEdit,
+  onDelete,
 }) => {
-  const dispatch = useAppDispatch();
-
-  const setCardListSorting = (sortCards: string) => {
-    dispatch(setCardListParams({ sortCards }));
-  };
-
-  const handleUpdateCard = (card: Card) => {
-    handleEditCardClick(card);
-  };
-
-  const handleDeleteCard = (card: Card) => {
-    handleDeleteCardClick(card);
-  };
-
   return (
     <table className="table">
       <thead className="table-head">
@@ -48,7 +34,7 @@ export const CardListTable: FC<CardListTableProps> = ({
             <ButtonSort
               sortParam={'question'}
               currentSorting={sortCards}
-              onSortClick={setCardListSorting}
+              onSortClick={onSortChange}
             >
               Question
             </ButtonSort>
@@ -57,7 +43,7 @@ export const CardListTable: FC<CardListTableProps> = ({
             <ButtonSort
               sortParam={'answer'}
               currentSorting={sortCards}
-              onSortClick={setCardListSorting}
+              onSortClick={onSortChange}
             >
               Answer
             </ButtonSort>
@@ -66,7 +52,7 @@ export const CardListTable: FC<CardListTableProps> = ({
             <ButtonSort
               sortParam={'updated'}
               currentSorting={sortCards}
-              onSortClick={setCardListSorting}
+              onSortClick={onSortChange}
             >
               Last Updated
             </ButtonSort>
@@ -75,7 +61,7 @@ export const CardListTable: FC<CardListTableProps> = ({
             <ButtonSort
               sortParam={'grade'}
               currentSorting={sortCards}
-              onSortClick={setCardListSorting}
+              onSortClick={onSortChange}
             >
               Grade
             </ButtonSort>
@@ -95,13 +81,10 @@ export const CardListTable: FC<CardListTableProps> = ({
             {isAuthUserPack && (
               <td>
                 <div className="table-actions">
-                  <Button aria-label={'Edit card'} onClick={() => handleUpdateCard(card)}>
+                  <Button aria-label={'Edit card'} onClick={() => onEdit(card)}>
                     <IconSvg src={editIcon} size={16} />
                   </Button>
-                  <Button
-                    aria-label={'Delete card'}
-                    onClick={() => handleDeleteCard(card)}
-                  >
+                  <Button aria-label={'Delete card'} onClick={() => onDelete(card)}>
                     <IconSvg src={deleteIcon} size={16} />
                   </Button>
                 </div>

@@ -1,8 +1,6 @@
 import type { FC } from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import type { Pack } from '../../../../main/types/pack';
-import { useAppDispatch } from '../../../../main/bll/store';
-import { setPackListParams } from '../../bll/packListReducer';
 import { PATH } from '../../../../main/ui/Main/paths';
 import { formatDate } from '../../../../utils/formatDate';
 import Button from '../../../../main/ui/common/components/Button/Button';
@@ -17,36 +15,21 @@ type PackListTableProps = {
   packs: Pack[];
   authUserId: string;
   sortPacks: string;
-  handleEditPackClick: (pack: Pack) => void;
-  handleDeletePackClick: (pack: Pack) => void;
+  onSortChange: (sortPacks: string) => void;
+  onLearn: (pack: Pack) => void;
+  onEdit: (pack: Pack) => void;
+  onDelete: (pack: Pack) => void;
 };
 
 export const PackListTable: FC<PackListTableProps> = ({
   packs,
   authUserId,
   sortPacks,
-  handleEditPackClick,
-  handleDeletePackClick,
+  onSortChange,
+  onLearn,
+  onEdit,
+  onDelete,
 }) => {
-  const dispatch = useAppDispatch();
-  const navigate = useNavigate();
-
-  const setPackListSorting = (sortPacks: string) => {
-    dispatch(setPackListParams({ sortPacks }));
-  };
-
-  const handleEditPack = (pack: Pack) => {
-    handleEditPackClick(pack);
-  };
-
-  const handleDeletePack = (pack: Pack) => {
-    handleDeletePackClick(pack);
-  };
-
-  const handleLearnCardPack = (id: string) => {
-    navigate(`${PATH.LEARN}/${id}`);
-  };
-
   return (
     <table className="table">
       <thead className="table-head">
@@ -55,7 +38,7 @@ export const PackListTable: FC<PackListTableProps> = ({
             <ButtonSort
               sortParam={'name'}
               currentSorting={sortPacks}
-              onSortClick={setPackListSorting}
+              onSortClick={onSortChange}
             >
               Name
             </ButtonSort>
@@ -64,7 +47,7 @@ export const PackListTable: FC<PackListTableProps> = ({
             <ButtonSort
               sortParam={'cardsCount'}
               currentSorting={sortPacks}
-              onSortClick={setPackListSorting}
+              onSortClick={onSortChange}
             >
               Cards
             </ButtonSort>
@@ -73,7 +56,7 @@ export const PackListTable: FC<PackListTableProps> = ({
             <ButtonSort
               sortParam={'updated'}
               currentSorting={sortPacks}
-              onSortClick={setPackListSorting}
+              onSortClick={onSortChange}
             >
               Last Updated
             </ButtonSort>
@@ -96,7 +79,7 @@ export const PackListTable: FC<PackListTableProps> = ({
                 <div className="table-actions">
                   <Button
                     aria-label={`Learn ${pack.name}`}
-                    onClick={() => handleLearnCardPack(pack._id)}
+                    onClick={() => onLearn(pack)}
                   >
                     <IconSvg src={learnIcon} size={16} />
                   </Button>
@@ -104,13 +87,13 @@ export const PackListTable: FC<PackListTableProps> = ({
                     <>
                       <Button
                         aria-label={`Edit ${pack.name}`}
-                        onClick={() => handleEditPack(pack)}
+                        onClick={() => onEdit(pack)}
                       >
                         <IconSvg src={editIcon} size={16} />
                       </Button>
                       <Button
                         aria-label={`Delete ${pack.name}`}
-                        onClick={() => handleDeletePack(pack)}
+                        onClick={() => onDelete(pack)}
                       >
                         <IconSvg src={deleteIcon} size={16} />
                       </Button>
