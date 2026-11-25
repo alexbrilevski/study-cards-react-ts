@@ -35,6 +35,10 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
     this.setState({ hasError: false });
   };
 
+  handleReload = () => {
+    window.location.reload();
+  };
+
   render() {
     if (!this.state.hasError) return this.props.children;
 
@@ -44,11 +48,14 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
           <h1>Something went wrong</h1>
         </div>
         <p className="form-note text-center">
-          The page failed to load. Please try again.
+          The page failed to load. Try again or reload the page.
         </p>
         <div className="form-actions">
           <Button variant={'contained'} color={'primary'} onClick={this.handleReset}>
             Try again
+          </Button>
+          <Button variant={'contained'} color={'white'} onClick={this.handleReload}>
+            Reload page
           </Button>
         </div>
       </div>
