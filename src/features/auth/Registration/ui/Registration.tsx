@@ -2,12 +2,12 @@ import { useEffect } from 'react';
 import { Navigate, NavLink } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../../../main/bll/store';
 import { setRegistrationSuccess } from '../bll/registrationReducer';
-import { PATH } from '../../../../main/ui/Main/Pages';
+import { PATH } from '../../../../main/ui/Main/paths';
 import { Logo } from '../../../../main/ui/common/components/Logo/Logo';
 import { RegistrationFrom } from './RegistrationFrom';
 
 export const Registration = () => {
-  const success = useAppSelector<boolean>((state) => state.registration.success);
+  const success = useAppSelector((state) => state.registration.success);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -17,7 +17,7 @@ export const Registration = () => {
   }, [dispatch]);
 
   if (success) {
-    return <Navigate to={PATH.LOGIN} />;
+    return <Navigate to={PATH.LOGIN} replace />;
   }
 
   return (

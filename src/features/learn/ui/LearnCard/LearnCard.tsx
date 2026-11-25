@@ -21,7 +21,7 @@ const grades = [
 export const LearnCard: FC<LearnCardProps> = ({ card }) => {
   const [showAnswer, setShowAnswer] = useState<boolean>(false);
   const [grade, setGrade] = useState<string>(grades[0]);
-  const isUpdatingGrade = useAppSelector<boolean>((state) => state.app.isLoading);
+  const isUpdatingGrade = useAppSelector((state) => state.app.isLoading);
   const dispatch = useAppDispatch();
 
   if (!card) {

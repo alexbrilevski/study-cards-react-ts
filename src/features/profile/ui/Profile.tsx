@@ -1,8 +1,7 @@
-import type { User } from '../../../main/types/user';
 import { useAppDispatch, useAppSelector } from '../../../main/bll/store';
 import { logout } from '../../auth/Login/bll/loginReducer';
-import { Navigate, useNavigate } from 'react-router-dom';
-import { PATH } from '../../../main/ui/Main/Pages';
+import { useNavigate } from 'react-router-dom';
+import { PATH } from '../../../main/ui/Main/paths';
 import { EditProfileForm } from './EditProfileForm';
 import ButtonBack from '../../../main/ui/common/components/ButtonBack/ButtonBack';
 import Button from '../../../main/ui/common/components/Button/Button';
@@ -10,7 +9,7 @@ import { IconSvg } from '../../../main/ui/common/components/IconSvg/IconSvg';
 import logoutIcon from '../../../assets/icons/logout.svg';
 
 export const Profile = () => {
-  const user = useAppSelector<User | null>((state) => state.profile.user);
+  const user = useAppSelector((state) => state.profile.user);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
@@ -23,7 +22,7 @@ export const Profile = () => {
   };
 
   if (!user) {
-    return <Navigate to={'/'} />;
+    return null;
   }
 
   return (

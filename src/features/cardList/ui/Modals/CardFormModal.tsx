@@ -6,7 +6,7 @@ type CardFormModalProps = {
   show: boolean;
   title: string;
   initValues?: CardFormData;
-  onCloseModal: (show: boolean) => void;
+  onCloseModal: () => void;
   onSubmitForm: (cardFormData: CardFormData) => void;
 };
 
@@ -19,11 +19,11 @@ export const CardFormModal: FC<CardFormModalProps> = ({
 }) => {
   const handleSubmitForm = (cardFormData: CardFormData) => {
     onSubmitForm(cardFormData);
-    onCloseModal(false);
+    onCloseModal();
   };
 
   const handleCloseModal = () => {
-    onCloseModal(false);
+    onCloseModal();
   };
 
   return (

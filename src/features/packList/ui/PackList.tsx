@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
-import { Navigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../../main/bll/store';
 import { useDebouncedCallback } from '../../../utils/hooks/useDebouncedCallback';
-import type { User } from '../../../main/types/user';
+import { PATH } from '../../../main/ui/Main/paths';
 import type { Pack } from '../../../main/types/pack';
 import {
   addPack,
@@ -11,7 +11,6 @@ import {
   fetchPackList,
   setPackListParams,
 } from '../bll/packListReducer';
-import { PATH } from '../../../main/ui/Main/Pages';
 import Button from '../../../main/ui/common/components/Button/Button';
 import { PackListHeader } from './PackListHeader/PackListHeader';
 import { PackListTable } from './PackListTable/PackListTable';
@@ -22,35 +21,29 @@ import { DeleteItemModal } from '../../../main/ui/common/components/DeleteItemMo
 
 export type CardsPackListView = 'my' | 'all';
 
-export const PackList = () => {
-  const [showAddPackModal, setShowAddPackModal] = useState<boolean>(false);
-  const [showEditPackModal, setShowEditPackModal] = useState<boolean>(false);
-  const [showDeletePackModal, setShowDeletePackModal] = useState<boolean>(false);
-  const [selectedCardPack, setSelectedCardPack] = useState<Pack | null>(null);
-  const [cardPackFormValues, setCardPackFormValues] = useState<CardPackFormData>({
-    name: '',
-    isPrivate: false,
-  });
+type PackListModal =
+  | { type: 'add' }
+  | { type: 'edit'; pack: Pack }
+  | { type: 'delete'; pack: Pack }
+  | null;
 
-  const authUser = useAppSelector<User | null>((state) => state.profile.user);
-  const cardPacks = useAppSelector<Pack[]>((state) => state.packList.cardPacks);
-  const minCardsCount = useAppSelector<number>((state) => state.packList.minCardsCount);
-  const maxCardsCount = useAppSelector<number>((state) => state.packList.maxCardsCount);
-  const min = useAppSelector<number | undefined>((state) => state.packList.params.min);
-  const max = useAppSelector<number | undefined>((state) => state.packList.params.max);
-  const packName = useAppSelector<string | undefined>(
-    (state) => state.packList.params.packName,
-  );
-  const user_id = useAppSelector<string | undefined>(
-    (state) => state.packList.params.user_id,
-  );
-  const sortPacks = useAppSelector<string>((state) => state.packList.params.sortPacks);
-  const page = useAppSelector<number>((state) => state.packList.params.page);
-  const pageSize = useAppSelector<number>((state) => state.packList.params.pageCount);
-  const totalPacksCount = useAppSelector<number>(
-    (state) => state.packList.cardPacksTotalCount,
-  );
+export const PackList = () => {
+  const [modal, setModal] = useState<PackListModal>(null);
+
+  const authUser = useAppSelector((state) => state.profile.user);
+  const cardPacks = useAppSelector((state) => state.packList.cardPacks);
+  const minCardsCount = useAppSelector((state) => state.packList.minCardsCount);
+  const maxCardsCount = useAppSelector((state) => state.packList.maxCardsCount);
+  const min = useAppSelector((state) => state.packList.params.min);
+  const max = useAppSelector((state) => state.packList.params.max);
+  const packName = useAppSelector((state) => state.packList.params.packName);
+  const user_id = useAppSelector((state) => state.packList.params.user_id);
+  const sortPacks = useAppSelector((state) => state.packList.params.sortPacks);
+  const page = useAppSelector((state) => state.packList.params.page);
+  const pageSize = useAppSelector((state) => state.packList.params.pageCount);
+  const totalPacksCount = useAppSelector((state) => state.packList.cardPacksTotalCount);
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const controller = new AbortController();
@@ -59,42 +52,44 @@ export const PackList = () => {
     return () => controller.abort();
   }, [page, pageSize, packName, user_id, min, max, sortPacks, dispatch]);
 
+  const handleCloseModal = () => {
+    setModal(null);
+  };
+
   const handleAddPackClick = () => {
-    setCardPackFormValues({ name: '', isPrivate: false });
-    setShowAddPackModal(true);
+    setModal({ type: 'add' });
   };
 
   const handleAddNewPack = (cardPack: CardPackFormData) => {
     dispatch(addPack(cardPack));
   };
 
+  const handleLearnPackClick = (pack: Pack) => {
+    navigate(`${PATH.LEARN}/${pack._id}`);
+  };
+
   const handleEditPackClick = (pack: Pack) => {
-    setSelectedCardPack(pack);
-    setCardPackFormValues({ name: pack.name, isPrivate: pack.private });
-    setShowEditPackModal(true);
+    setModal({ type: 'edit', pack });
   };
 
   const handleEditPack = (cardPackData: CardPackFormData) => {
-    if (selectedCardPack) {
-      dispatch(
-        editPack({
-          _id: selectedCardPack._id,
-          ...cardPackData,
-          private: cardPackData.isPrivate,
-        }),
-      );
-    }
+    if (modal?.type !== 'edit') return;
+
+    dispatch(
+      editPack({
+        _id: modal.pack._id,
+        ...cardPackData,
+        private: cardPackData.isPrivate,
+      }),
+    );
   };
 
   const handleDeletePackClick = (pack: Pack) => {
-    setSelectedCardPack(pack);
-    setShowDeletePackModal(true);
+    setModal({ type: 'delete', pack });
   };
 
-  const handleDeletePack = () => {
-    if (selectedCardPack) {
-      dispatch(deletePack(selectedCardPack._id));
-    }
+  const handleDeletePack = (id: string) => {
+    dispatch(deletePack(id));
   };
 
   const setPackNameSearchParam = useDebouncedCallback((packName: string) => {
@@ -120,6 +115,10 @@ export const PackList = () => {
     );
   };
 
+  const setPackListSorting = (sortPacks: string) => {
+    dispatch(setPackListParams({ sortPacks }));
+  };
+
   const handlePageChange = (pageNumber: number) => {
     dispatch(setPackListParams({ page: pageNumber }));
   };
@@ -129,7 +128,7 @@ export const PackList = () => {
   };
 
   if (!authUser) {
-    return <Navigate to={PATH.LOGIN} />;
+    return null;
   }
 
   return (
@@ -144,12 +143,12 @@ export const PackList = () => {
       </div>
       <>
         <PackListHeader
-          packName={packName !== undefined ? packName : ''}
-          min={min !== undefined ? min : minCardsCount}
-          max={max !== undefined ? max : maxCardsCount}
+          packName={packName ?? ''}
+          min={min ?? minCardsCount}
+          max={max ?? maxCardsCount}
           minCardsCount={minCardsCount}
           maxCardsCount={maxCardsCount}
-          userId={user_id !== undefined ? user_id : ''}
+          userId={user_id ?? ''}
           onSearchByPackName={setPackNameSearchParam}
           onSelectPackListView={setPackListView}
           onCardsCountRangeChange={setCardsCountRange}
@@ -161,8 +160,10 @@ export const PackList = () => {
               packs={cardPacks}
               authUserId={authUser._id}
               sortPacks={sortPacks}
-              handleEditPackClick={handleEditPackClick}
-              handleDeletePackClick={handleDeletePackClick}
+              onSortChange={setPackListSorting}
+              onLearn={handleLearnPackClick}
+              onEdit={handleEditPackClick}
+              onDelete={handleDeletePackClick}
             />
             <Pagination
               currentPage={page}
@@ -180,27 +181,29 @@ export const PackList = () => {
         )}
       </>
       <CardPackFormModal
-        show={showAddPackModal}
+        show={modal?.type === 'add'}
         title={'Add new pack'}
-        onCloseModal={setShowAddPackModal}
+        onCloseModal={handleCloseModal}
         onSubmitForm={handleAddNewPack}
       />
-      <CardPackFormModal
-        show={showEditPackModal}
-        title={'Edit pack'}
-        initValues={cardPackFormValues}
-        onCloseModal={setShowEditPackModal}
-        onSubmitForm={handleEditPack}
-      />
-      {selectedCardPack && (
+      {modal?.type === 'edit' && (
+        <CardPackFormModal
+          show
+          title={'Edit pack'}
+          initValues={{ name: modal.pack.name, isPrivate: modal.pack.private }}
+          onCloseModal={handleCloseModal}
+          onSubmitForm={handleEditPack}
+        />
+      )}
+      {modal?.type === 'delete' && (
         <DeleteItemModal
-          show={showDeletePackModal}
+          show
           title={'Delete pack'}
-          itemId={selectedCardPack._id}
-          onCloseModal={setShowDeletePackModal}
+          itemId={modal.pack._id}
+          onCloseModal={handleCloseModal}
           onConfirmDelete={handleDeletePack}
         >
-          Do you really want to remove <b>{selectedCardPack.name}</b>?<br />
+          Do you really want to remove <b>{modal.pack.name}</b>?<br />
           All it's cards will be deleted as well.
         </DeleteItemModal>
       )}
