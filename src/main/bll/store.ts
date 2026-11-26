@@ -23,10 +23,7 @@ import {
   passwordRecoveryReducer,
   type PasswordRecoveryActions,
 } from '../../features/auth/PasswordRecovery/bll/passwordRecoveryReducer';
-import {
-  profileReducer,
-  type ProfileActions,
-} from '../../features/profile/bll/profileReducer';
+import { profileReducer } from '../../features/profile/bll/profileReducer';
 import {
   packListReducer,
   type PackListActions,
@@ -42,7 +39,6 @@ export type RootState = ReturnType<typeof store.getState>;
 export type RootAction =
   | RegistrationActions
   | LoginActions
-  | ProfileActions
   | NewPasswordActions
   | PasswordRecoveryActions
   | PackListActions

@@ -9,7 +9,6 @@ import {
 import axios from 'axios';
 import { appAPI } from '../dal/appApi';
 import { createAppAsyncThunk } from './createAppAsyncThunk';
-import { setAuthUser } from '../../features/profile/bll/profileReducer';
 import { handleApiRequestError } from '../../utils/notificationUtils';
 
 export type AppNotification = {
@@ -33,9 +32,7 @@ export const initializeApp = createAppAsyncThunk(
   'app/initializeApp',
   async (_, { dispatch }) => {
     try {
-      const user = await appAPI.me();
-      dispatch(setAuthUser(user));
-      return user;
+      return await appAPI.me();
     } catch (error) {
       if (
         axios.isAxiosError<{ error?: string }>(error) &&

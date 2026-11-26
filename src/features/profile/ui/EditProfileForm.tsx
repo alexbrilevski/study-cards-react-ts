@@ -24,8 +24,7 @@ export const EditProfileForm: FC<EditProfileFormProps> = ({ user }) => {
   }, [error, dispatch]);
 
   const handleSaveName = (name: string) => {
-    if (error) dispatch(setEditProfileFormError(null));
-    dispatch(saveUpdatedUserData(name, user.avatar || ''));
+    dispatch(saveUpdatedUserData({ name, avatar: user.avatar || '' }));
   };
 
   return (

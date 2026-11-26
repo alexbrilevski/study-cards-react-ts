@@ -1,63 +1,59 @@
+import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 import type { User } from '../../../main/types/user';
-import type { RootThunk } from '../../../main/bll/store';
+import { createAppAsyncThunk } from '../../../main/bll/createAppAsyncThunk';
+import { initializeApp } from '../../../main/bll/appReducer';
+import { getErrorMessage } from '../../../utils/notificationUtils';
 import { profileAPI } from '../dal/profileApi';
-import { setAppIsLoading } from '../../../main/bll/appReducer';
 
-// Constants
-const ACTION_TYPES = {
-  SET_AUTH_USER: 'profile/SET-AUTH-USER',
-  SET_FORM_ERROR: 'profile/SET-FORM-ERROR',
-} as const;
-
-// Types
-type InitState = typeof initState;
-type SetAuthUserAction = ReturnType<typeof setAuthUser>;
-type SetEditProfileFormErrorAction = ReturnType<typeof setEditProfileFormError>;
-export type ProfileActions = SetAuthUserAction | SetEditProfileFormErrorAction;
-
-// Initial state
-const initState = {
-  user: null as User | null,
-  error: null as string | null,
+type ProfileState = {
+  user: User | null;
+  error: string | null;
 };
 
-export const profileReducer = (
-  state: InitState = initState,
-  action: ProfileActions,
-): InitState => {
-  switch (action.type) {
-    case ACTION_TYPES.SET_AUTH_USER:
-    case ACTION_TYPES.SET_FORM_ERROR: {
-      return { ...state, ...action.payload };
+const initialState: ProfileState = {
+  user: null,
+  error: null,
+};
+
+export const saveUpdatedUserData = createAppAsyncThunk(
+  'profile/saveUpdatedUserData',
+  async ({ name, avatar }: { name: string; avatar: string }, { rejectWithValue }) => {
+    try {
+      const data = await profileAPI.updateUserData(name, avatar);
+      return data.updatedUser;
+    } catch (error) {
+      return rejectWithValue(getErrorMessage(error));
     }
-    default:
-      return state;
-  }
-};
+  },
+);
 
-// Action creators
-export const setAuthUser = (user: User | null) =>
-  ({ type: ACTION_TYPES.SET_AUTH_USER, payload: { user } }) as const;
-export const setEditProfileFormError = (error: string | null) =>
-  ({ type: ACTION_TYPES.SET_FORM_ERROR, payload: { error } }) as const;
-
-// Thunk creators
-export const saveUpdatedUserData =
-  (name: string, avatar: string): RootThunk =>
-  (dispatch) => {
-    dispatch(setAppIsLoading(true));
-    profileAPI
-      .updateUserData(name, avatar)
-      .then((data) => {
-        dispatch(setAuthUser(data.updatedUser));
+const profileSlice = createSlice({
+  name: 'profile',
+  initialState,
+  reducers: {
+    setAuthUser(state, action: PayloadAction<User | null>) {
+      state.user = action.payload;
+    },
+    setEditProfileFormError(state, action: PayloadAction<string | null>) {
+      state.error = action.payload;
+    },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(initializeApp.fulfilled, (state, action) => {
+        state.user = action.payload;
       })
-      .catch((error) => {
-        const errorMessage = error.response
-          ? error.response.data.error
-          : error.message + ', more details in the console';
-        dispatch(setEditProfileFormError(errorMessage));
+      .addCase(saveUpdatedUserData.pending, (state) => {
+        state.error = null;
       })
-      .finally(() => {
-        dispatch(setAppIsLoading(false));
+      .addCase(saveUpdatedUserData.fulfilled, (state, action) => {
+        state.user = action.payload;
+      })
+      .addCase(saveUpdatedUserData.rejected, (state, action) => {
+        state.error = action.payload ?? null;
       });
-  };
+  },
+});
+
+export const { setAuthUser, setEditProfileFormError } = profileSlice.actions;
+export const profileReducer = profileSlice.reducer;
