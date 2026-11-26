@@ -21,10 +21,9 @@ export const LearnPage: FC = () => {
   useEffect(() => {
     if (!cardPackId) return;
 
-    const controller = new AbortController();
-    dispatch(fetchCardPackToLearn(cardPackId, controller.signal));
+    const promise = dispatch(fetchCardPackToLearn(cardPackId));
 
-    return () => controller.abort();
+    return () => promise.abort();
   }, [cardPackId, dispatch]);
 
   const handleGoBack = () => {

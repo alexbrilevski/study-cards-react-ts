@@ -1,121 +1,94 @@
-import type { Card, CardListData } from '../../../main/types/card';
-import type { RootThunk } from '../../../main/bll/store';
-import { setAppIsLoading } from '../../../main/bll/appReducer';
+import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
+import { createAppAsyncThunk } from '../../../main/bll/createAppAsyncThunk';
+import type { Card } from '../../../main/types/card';
+import type { Grade } from '../../../main/types/grade';
 import { cardListAPI } from '../../cardList/dal/cardListApi';
 import { handleApiRequestError } from '../../../utils/notificationUtils';
-import { learnAPI, type UpdateCardGradeData } from '../dal/learnApi';
-import type { Grade } from '../../../main/types/grade';
 import { getRandomCard } from '../../../utils/getRandomCard';
+import { learnAPI, type UpdateCardGradeData } from '../dal/learnApi';
 
-// Constants
-const ACTION_TYPES = {
-  SET_CARD_PACK_TO_LEARN: 'learn/SET-CARD-PACK-TO-LEARN',
-  SET_UPDATED_CARD_GRADE: 'learn/SET-UPDATED-CARD-GRADE',
-  SET_CURRENT_CARD_ID: 'learn/SET-CURRENT-CARD-ID',
-  SET_IS_FETCHING_CARD_PACK: 'learn/SET-IS-FETCHING-CARD-PACK',
-  RESET_LEARN_STATE: 'learn/RESET-LEARN-STATE',
-} as const;
+type LearnState = {
+  cardPack: {
+    packName: string;
+    cards: Card[];
+  };
+  currentCardId: string | null;
+  isFetchingCardPack: boolean;
+};
 
-export type LearnActions =
-  | ReturnType<typeof setCardPackToLearn>
-  | ReturnType<typeof setUpdatedCardGrade>
-  | ReturnType<typeof setCurrentCardId>
-  | ReturnType<typeof setIsFetchingCardPack>
-  | ReturnType<typeof resetLearnState>;
-
-type InitState = typeof initState;
-
-const initState = {
+const initialState: LearnState = {
   cardPack: {
     packName: '',
-    cards: [] as Card[],
+    cards: [],
   },
-  currentCardId: null as string | null,
+  currentCardId: null,
   isFetchingCardPack: true,
 };
 
-export const learnReducer = (
-  state: InitState = initState,
-  action: LearnActions,
-): InitState => {
-  switch (action.type) {
-    case ACTION_TYPES.SET_CARD_PACK_TO_LEARN:
-    case ACTION_TYPES.SET_CURRENT_CARD_ID:
-    case ACTION_TYPES.SET_IS_FETCHING_CARD_PACK: {
-      return { ...state, ...action.payload };
+export const fetchCardPackToLearn = createAppAsyncThunk(
+  'learn/fetchCardPackToLearn',
+  async (cardPackId: string, { dispatch, signal }) => {
+    try {
+      const { packName, cards } = await cardListAPI.getCards(
+        { cardsPack_id: cardPackId, pageCount: 1000000 },
+        signal,
+      );
+      return { packName, cards, currentCardId: getRandomCard(cards)?._id ?? null };
+    } catch (error) {
+      handleApiRequestError(error, dispatch);
+      throw error;
     }
-    case ACTION_TYPES.RESET_LEARN_STATE: {
-      return initState;
-    }
-    case ACTION_TYPES.SET_UPDATED_CARD_GRADE: {
-      const { card_id, grade, shots } = action.payload.grade;
-      return {
-        ...state,
-        cardPack: {
-          ...state.cardPack,
-          cards: state.cardPack.cards.map((card) =>
-            card._id === card_id ? { ...card, grade, shots } : card,
-          ),
-        },
-      };
-    }
-    default: {
-      return state;
-    }
-  }
-};
+  },
+);
 
-// Action creators
-const setCardPackToLearn = (cardPack: Pick<CardListData, 'packName' | 'cards'>) =>
-  ({ type: ACTION_TYPES.SET_CARD_PACK_TO_LEARN, payload: { cardPack } }) as const;
-const setUpdatedCardGrade = (grade: Grade) =>
-  ({ type: ACTION_TYPES.SET_UPDATED_CARD_GRADE, payload: { grade } }) as const;
-const setCurrentCardId = (currentCardId: string | null) =>
-  ({ type: ACTION_TYPES.SET_CURRENT_CARD_ID, payload: { currentCardId } }) as const;
-const setIsFetchingCardPack = (isFetchingCardPack: boolean) =>
-  ({
-    type: ACTION_TYPES.SET_IS_FETCHING_CARD_PACK,
-    payload: { isFetchingCardPack },
-  }) as const;
-const resetLearnState = () => ({ type: ACTION_TYPES.RESET_LEARN_STATE }) as const;
+export const updateCardGrade = createAppAsyncThunk(
+  'learn/updateCardGrade',
+  async (data: UpdateCardGradeData, { dispatch, getState }) => {
+    try {
+      const { updatedGrade } = await learnAPI.updateCardGrade(data);
+      if (updatedGrade) dispatch(setUpdatedCardGrade(updatedGrade));
 
-// Thunk creators
-export const fetchCardPackToLearn =
-  (cardPackId: string, signal?: AbortSignal): RootThunk =>
-  (dispatch) => {
-    dispatch(resetLearnState());
-    cardListAPI
-      .getCards({ cardsPack_id: cardPackId, pageCount: 1000000 }, signal)
-      .then((data) => {
-        dispatch(setCardPackToLearn({ packName: data.packName, cards: data.cards }));
-        dispatch(setCurrentCardId(getRandomCard(data.cards)?._id ?? null));
+      const { cards } = getState().learn.cardPack;
+      dispatch(setCurrentCardId(getRandomCard(cards)?._id ?? null));
+    } catch (error) {
+      handleApiRequestError(error, dispatch);
+      throw error;
+    }
+  },
+);
+
+const learnSlice = createSlice({
+  name: 'learn',
+  initialState,
+  reducers: {
+    setUpdatedCardGrade(state, action: PayloadAction<Grade>) {
+      const { card_id, grade, shots } = action.payload;
+      const card = state.cardPack.cards.find((card) => card._id === card_id);
+
+      if (card) {
+        card.grade = grade;
+        card.shots = shots;
+      }
+    },
+    setCurrentCardId(state, action: PayloadAction<string | null>) {
+      state.currentCardId = action.payload;
+    },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchCardPackToLearn.pending, () => initialState)
+      .addCase(fetchCardPackToLearn.fulfilled, (state, action) => {
+        const { packName, cards, currentCardId } = action.payload;
+
+        state.cardPack = { packName, cards };
+        state.currentCardId = currentCardId;
+        state.isFetchingCardPack = false;
       })
-      .catch((error) => {
-        handleApiRequestError(error, dispatch);
-      })
-      .finally(() => {
-        if (!signal?.aborted) dispatch(setIsFetchingCardPack(false));
+      .addCase(fetchCardPackToLearn.rejected, (state, action) => {
+        if (!action.meta.aborted) state.isFetchingCardPack = false;
       });
-  };
-export const updateCardGrade =
-  (data: UpdateCardGradeData): RootThunk<Promise<void>> =>
-  (dispatch, getState) => {
-    dispatch(setAppIsLoading(true));
-    return learnAPI
-      .updateCardGrade(data)
-      .then((data) => {
-        const { updatedGrade } = data;
-        if (updatedGrade) {
-          dispatch(setUpdatedCardGrade(updatedGrade));
-        }
+  },
+});
 
-        const { cards } = getState().learn.cardPack;
-        dispatch(setCurrentCardId(getRandomCard(cards)?._id ?? null));
-      })
-      .catch((error) => {
-        handleApiRequestError(error, dispatch);
-      })
-      .finally(() => {
-        dispatch(setAppIsLoading(false));
-      });
-  };
+const { setUpdatedCardGrade, setCurrentCardId } = learnSlice.actions;
+export const learnReducer = learnSlice.reducer;

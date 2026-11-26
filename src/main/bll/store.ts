@@ -14,11 +14,9 @@ import { passwordRecoveryReducer } from '../../features/auth/PasswordRecovery/bl
 import { profileReducer } from '../../features/profile/bll/profileReducer';
 import { packListReducer } from '../../features/packList/bll/packListReducer';
 import { cardListReducer } from '../../features/cardList/bll/cardListReducer';
-import { learnReducer, type LearnActions } from '../../features/learn/bll/learnReducer';
+import { learnReducer } from '../../features/learn/bll/learnReducer';
 
 export type RootState = ReturnType<typeof store.getState>;
-
-export type RootAction = LearnActions;
 
 export type RootThunk<ReturnType = void> = ThunkAction<
   ReturnType,
