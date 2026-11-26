@@ -70,10 +70,9 @@ const CardListPage: FC<CardListPageProps> = ({ cardPackId }) => {
   const cardPackFormValues = { name: packName, isPrivate: packPrivate };
 
   useEffect(() => {
-    const controller = new AbortController();
-    dispatch(fetchCardList(cardPackId, controller.signal));
+    const promise = dispatch(fetchCardList(cardPackId));
 
-    return () => controller.abort();
+    return () => promise.abort();
   }, [cardPackId, cardQuestion, sortCards, page, pageSize, dispatch]);
 
   useEffect(() => {

@@ -13,17 +13,12 @@ import { newPasswordReducer } from '../../features/auth/PasswordRecovery/bll/new
 import { passwordRecoveryReducer } from '../../features/auth/PasswordRecovery/bll/passwordRecoveryReducer';
 import { profileReducer } from '../../features/profile/bll/profileReducer';
 import { packListReducer } from '../../features/packList/bll/packListReducer';
-import {
-  cardListReducer,
-  type CardListActions,
-} from '../../features/cardList/bll/cardListReducer';
+import { cardListReducer } from '../../features/cardList/bll/cardListReducer';
 import { learnReducer, type LearnActions } from '../../features/learn/bll/learnReducer';
 
 export type RootState = ReturnType<typeof store.getState>;
 
-export type RootAction =
-  | CardListActions
-  | LearnActions;
+export type RootAction = LearnActions;
 
 export type RootThunk<ReturnType = void> = ThunkAction<
   ReturnType,

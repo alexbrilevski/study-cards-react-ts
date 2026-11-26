@@ -1,30 +1,32 @@
-import { setAppIsLoading } from '../../../main/bll/appReducer';
-import type { RootThunk } from '../../../main/bll/store';
-import type { Card, CardListData, CardListQueryParams } from '../../../main/types/card';
+import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
+import { createAppAsyncThunk } from '../../../main/bll/createAppAsyncThunk';
+import type { Card, CardListQueryParams } from '../../../main/types/card';
 import { handleApiRequestError } from '../../../utils/notificationUtils';
 import { cardListAPI, type NewCardData, type UpdateCardData } from '../dal/cardListApi';
 import { packListAPI, type UpdatePackRequestData } from '../../packList/dal/packListApi';
 
-// Constants
-const ACTION_TYPES = {
-  SET_CARD_LIST_DATA: 'card-list/SET-DATA',
-  SET_CARD_LIST_PARAMS: 'card-list/SET-CARD-LIST-PARAMS',
-  UPDATE_CARD_PACK_NAME: 'card-list/UPDATE-CARD-PACK-NAME',
-  SET_DELETED_CARD_PACK_STATE: 'card-list/SET-DELETED-CARD-PACK-STATE',
-  RESET_CARD_LIST_STATE: 'card-list/RESET-CARD-LIST-STATE',
-} as const;
+type CardListState = {
+  cards: Card[];
+  packUserId: string;
+  packName: string;
+  packPrivate: boolean;
+  packDeleted: boolean;
+  cardsTotalCount: number;
+  maxGrade: number;
+  minGrade: number;
+  params: {
+    cardAnswer?: string;
+    cardQuestion?: string;
+    min?: number;
+    max?: number;
+    sortCards: string;
+    page: number;
+    pageCount: number;
+  };
+};
 
-export type CardListActions =
-  | ReturnType<typeof setCardListData>
-  | ReturnType<typeof setCardListParams>
-  | ReturnType<typeof updateCardPackName>
-  | ReturnType<typeof setDeletedCardPackState>
-  | ReturnType<typeof resetCardListState>;
-
-type InitState = typeof initState;
-
-const initState = {
-  cards: [] as Card[],
+const initialState: CardListState = {
+  cards: [],
   packUserId: '',
   packName: '',
   packPrivate: false,
@@ -33,169 +35,129 @@ const initState = {
   maxGrade: 0,
   minGrade: 0,
   params: {
-    cardAnswer: undefined as string | undefined,
-    cardQuestion: undefined as string | undefined,
-    min: undefined as number | undefined,
-    max: undefined as number | undefined,
+    cardAnswer: undefined,
+    cardQuestion: undefined,
+    min: undefined,
+    max: undefined,
     sortCards: '0updated',
     page: 1,
     pageCount: 10,
   },
 };
 
-export const cardListReducer = (
-  state: InitState = initState,
-  action: CardListActions,
-): InitState => {
-  switch (action.type) {
-    case ACTION_TYPES.SET_CARD_LIST_DATA: {
-      const { page, pageCount, ...cardListData } = action.payload;
-      return {
-        ...state,
-        ...cardListData,
-        params: { ...state.params, page, pageCount },
-      };
+export const fetchCardList = createAppAsyncThunk(
+  'cardList/fetchCardList',
+  async (cardsPack_id: string, { getState, dispatch, signal }) => {
+    try {
+      const params = { cardsPack_id, ...getState().cardList.params };
+      return await cardListAPI.getCards(params, signal);
+    } catch (error) {
+      handleApiRequestError(error, dispatch);
+      throw error;
     }
-    case ACTION_TYPES.SET_CARD_LIST_PARAMS: {
-      return { ...state, params: { ...state.params, ...action.payload } };
-    }
-    case ACTION_TYPES.UPDATE_CARD_PACK_NAME:
-    case ACTION_TYPES.SET_DELETED_CARD_PACK_STATE: {
-      return { ...state, ...action.payload };
-    }
-    case ACTION_TYPES.RESET_CARD_LIST_STATE: {
-      return initState;
-    }
-    default: {
-      return state;
-    }
-  }
-};
+  },
+);
 
-// Action creators
-const setCardListData = (cardListData: CardListData) =>
-  ({ type: ACTION_TYPES.SET_CARD_LIST_DATA, payload: cardListData }) as const;
-export const setCardListParams = (params: Omit<CardListQueryParams, 'cardsPack_id'>) =>
-  ({ type: ACTION_TYPES.SET_CARD_LIST_PARAMS, payload: params }) as const;
-const updateCardPackName = (packName: string) =>
-  ({ type: ACTION_TYPES.UPDATE_CARD_PACK_NAME, payload: { packName } }) as const;
-export const setDeletedCardPackState = (isDeleted: boolean) =>
-  ({
-    type: ACTION_TYPES.SET_DELETED_CARD_PACK_STATE,
-    payload: { packDeleted: isDeleted },
-  }) as const;
-export const resetCardListState = () =>
-  ({ type: ACTION_TYPES.RESET_CARD_LIST_STATE }) as const;
+export const addCard = createAppAsyncThunk(
+  'cardList/addCard',
+  async (cardData: NewCardData, { dispatch }) => {
+    try {
+      const { newCard } = await cardListAPI.addCard(cardData);
+      if (newCard) await dispatch(fetchCardList(newCard.cardsPack_id));
+    } catch (error) {
+      handleApiRequestError(error, dispatch);
+      throw error;
+    }
+  },
+);
 
-// Thunk creators
-export const fetchCardList =
-  (cardsPack_id: string, signal?: AbortSignal): RootThunk =>
-  (dispatch, getState) => {
-    const params = { cardsPack_id, ...getState().cardList.params };
+export const editCard = createAppAsyncThunk(
+  'cardList/editCard',
+  async (cardData: UpdateCardData, { dispatch }) => {
+    try {
+      const { updatedCard } = await cardListAPI.updateCard(cardData);
+      if (updatedCard) await dispatch(fetchCardList(updatedCard.cardsPack_id));
+    } catch (error) {
+      handleApiRequestError(error, dispatch);
+      throw error;
+    }
+  },
+);
 
-    dispatch(setAppIsLoading(true));
-    cardListAPI
-      .getCards(params, signal)
-      .then((data) => {
-        dispatch(setCardListData(data));
+export const deleteCard = createAppAsyncThunk(
+  'cardList/deleteCard',
+  async (id: string, { dispatch }) => {
+    try {
+      const { deletedCard } = await cardListAPI.deleteCard(id);
+      await dispatch(fetchCardList(deletedCard.cardsPack_id));
+    } catch (error) {
+      handleApiRequestError(error, dispatch);
+      throw error;
+    }
+  },
+);
+
+export const editCurrentCardPack = createAppAsyncThunk(
+  'cardList/editCurrentCardPack',
+  async (cardsPack: UpdatePackRequestData, { dispatch }) => {
+    try {
+      const { updatedCardsPack } = await packListAPI.updatePack(cardsPack);
+      return updatedCardsPack;
+    } catch (error) {
+      handleApiRequestError(error, dispatch);
+      throw error;
+    }
+  },
+);
+
+export const deleteCurrentCardPack = createAppAsyncThunk(
+  'cardList/deleteCurrentCardPack',
+  async (id: string, { dispatch }) => {
+    try {
+      const { deletedCardsPack } = await packListAPI.deletePack(id);
+      return Boolean(deletedCardsPack);
+    } catch (error) {
+      handleApiRequestError(error, dispatch);
+      throw error;
+    }
+  },
+);
+
+const cardListSlice = createSlice({
+  name: 'cardList',
+  initialState,
+  reducers: {
+    setCardListParams(
+      state,
+      action: PayloadAction<Omit<CardListQueryParams, 'cardsPack_id'>>,
+    ) {
+      Object.assign(state.params, action.payload);
+    },
+    resetCardListState: () => initialState,
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchCardList.fulfilled, (state, action) => {
+        const data = action.payload;
+
+        state.cards = data.cards;
+        state.packUserId = data.packUserId;
+        state.packName = data.packName;
+        state.packPrivate = data.packPrivate;
+        state.cardsTotalCount = data.cardsTotalCount;
+        state.maxGrade = data.maxGrade;
+        state.minGrade = data.minGrade;
+        state.params.page = data.page;
+        state.params.pageCount = data.pageCount;
       })
-      .catch((error) => {
-        handleApiRequestError(error, dispatch);
+      .addCase(editCurrentCardPack.fulfilled, (state, action) => {
+        if (action.payload) state.packName = action.payload.name;
       })
-      .finally(() => {
-        dispatch(setAppIsLoading(false));
+      .addCase(deleteCurrentCardPack.fulfilled, (state, action) => {
+        if (action.payload) state.packDeleted = true;
       });
-  };
-export const addCard =
-  (cardData: NewCardData): RootThunk =>
-  (dispatch) => {
-    dispatch(setAppIsLoading(true));
-    cardListAPI
-      .addCard(cardData)
-      .then((data) => {
-        const { newCard } = data;
-        if (newCard) {
-          dispatch(fetchCardList(newCard.cardsPack_id));
-        }
-      })
-      .catch((error) => {
-        handleApiRequestError(error, dispatch);
-      })
-      .finally(() => {
-        dispatch(setAppIsLoading(false));
-      });
-  };
-export const editCard =
-  (cardData: UpdateCardData): RootThunk =>
-  (dispatch) => {
-    dispatch(setAppIsLoading(true));
-    cardListAPI
-      .updateCard(cardData)
-      .then((data) => {
-        const { updatedCard } = data;
-        if (updatedCard) {
-          dispatch(fetchCardList(updatedCard.cardsPack_id));
-        }
-      })
-      .catch((error) => {
-        handleApiRequestError(error, dispatch);
-      })
-      .finally(() => {
-        dispatch(setAppIsLoading(false));
-      });
-  };
-export const deleteCard =
-  (id: string): RootThunk =>
-  (dispatch) => {
-    dispatch(setAppIsLoading(true));
-    cardListAPI
-      .deleteCard(id)
-      .then((data) => {
-        const { deletedCard } = data;
-        dispatch(fetchCardList(deletedCard.cardsPack_id));
-      })
-      .catch((error) => {
-        handleApiRequestError(error, dispatch);
-      })
-      .finally(() => {
-        dispatch(setAppIsLoading(false));
-      });
-  };
-export const editCurrentCardPack =
-  (cardsPack: UpdatePackRequestData): RootThunk =>
-  (dispatch) => {
-    dispatch(setAppIsLoading(true));
-    packListAPI
-      .updatePack(cardsPack)
-      .then((data) => {
-        const { updatedCardsPack } = data;
-        if (updatedCardsPack) {
-          dispatch(updateCardPackName(updatedCardsPack.name));
-        }
-      })
-      .catch((error) => {
-        handleApiRequestError(error, dispatch);
-      })
-      .finally(() => {
-        dispatch(setAppIsLoading(false));
-      });
-  };
-export const deleteCurrentCardPack =
-  (id: string): RootThunk =>
-  (dispatch) => {
-    dispatch(setAppIsLoading(true));
-    packListAPI
-      .deletePack(id)
-      .then((data) => {
-        const { deletedCardsPack } = data;
-        if (deletedCardsPack) {
-          dispatch(setDeletedCardPackState(true));
-        }
-      })
-      .catch((error) => {
-        handleApiRequestError(error, dispatch);
-      })
-      .finally(() => {
-        dispatch(setAppIsLoading(false));
-      });
-  };
+  },
+});
+
+export const { setCardListParams, resetCardListState } = cardListSlice.actions;
+export const cardListReducer = cardListSlice.reducer;
