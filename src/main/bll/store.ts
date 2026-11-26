@@ -1,6 +1,12 @@
-import { combineReducers, configureStore, type ThunkAction } from '@reduxjs/toolkit';
+import {
+  combineReducers,
+  configureStore,
+  type Reducer,
+  type ThunkAction,
+  type UnknownAction,
+} from '@reduxjs/toolkit';
 import { useDispatch, useSelector, type TypedUseSelectorHook } from 'react-redux';
-import { appReducer, type AppActions } from './appReducer';
+import { appReducer } from './appReducer';
 import {
   registrationReducer,
   type RegistrationActions,
@@ -34,7 +40,6 @@ import { learnReducer, type LearnActions } from '../../features/learn/bll/learnR
 export type RootState = ReturnType<typeof store.getState>;
 
 export type RootAction =
-  | AppActions
   | RegistrationActions
   | LoginActions
   | ProfileActions
@@ -48,7 +53,7 @@ export type RootThunk<ReturnType = void> = ThunkAction<
   ReturnType,
   RootState,
   unknown,
-  RootAction
+  UnknownAction
 >;
 export type AppDispatch = typeof store.dispatch;
 
@@ -68,4 +73,9 @@ const rootReducer = combineReducers({
   learn: learnReducer,
 });
 
-export const store = configureStore({ reducer: rootReducer });
+export const store = configureStore({
+  reducer: rootReducer as unknown as Reducer<
+    ReturnType<typeof rootReducer>,
+    UnknownAction
+  >,
+});

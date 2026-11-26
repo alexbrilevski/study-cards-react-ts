@@ -1,80 +1,79 @@
-import type { RootThunk } from './store';
+import {
+  createSlice,
+  isAnyOf,
+  isFulfilled,
+  isPending,
+  isRejected,
+  type PayloadAction,
+} from '@reduxjs/toolkit';
+import axios from 'axios';
 import { appAPI } from '../dal/appApi';
+import { createAppAsyncThunk } from './createAppAsyncThunk';
 import { setAuthUser } from '../../features/profile/bll/profileReducer';
 import { handleApiRequestError } from '../../utils/notificationUtils';
 
-// Constants
-const ACTION_TYPES = {
-  SET_IS_INITIALIZED: 'app/SET-IS-INITIALIZED',
-  SET_IS_LOADING: 'app/SET-IS-LOADING',
-  SET_NOTIFICATION: 'app/SET-NOTIFICATION',
-} as const;
-
-// Types
-type InitStateType = typeof initState;
 export type AppNotification = {
   type: 'error' | 'info' | 'success';
   message: string;
 };
 
-// Initial state
-const initState = {
+type AppState = {
+  isInitialized: boolean;
+  isLoading: boolean;
+  notification: AppNotification | null;
+};
+
+const initialState: AppState = {
   isInitialized: false,
   isLoading: false,
-  notification: null as AppNotification | null,
+  notification: null,
 };
 
-type SetAppIsInitializedAction = ReturnType<typeof setAppIsInitialized>;
-type SetAppIsLoadingAction = ReturnType<typeof setAppIsLoading>;
-type SetAppErrorAction = ReturnType<typeof setAppNotification>;
-export type AppActions =
-  | SetAppIsInitializedAction
-  | SetAppIsLoadingAction
-  | SetAppErrorAction;
-
-export const appReducer = (
-  state: InitStateType = initState,
-  action: AppActions,
-): InitStateType => {
-  switch (action.type) {
-    case ACTION_TYPES.SET_IS_INITIALIZED:
-    case ACTION_TYPES.SET_IS_LOADING:
-    case ACTION_TYPES.SET_NOTIFICATION:
-      return { ...state, ...action.payload };
-    default:
-      return state;
-  }
-};
-
-// Action creators
-export const setAppIsInitialized = (value: boolean) =>
-  ({
-    type: ACTION_TYPES.SET_IS_INITIALIZED,
-    payload: { isInitialized: value },
-  }) as const;
-export const setAppIsLoading = (value: boolean) =>
-  ({ type: ACTION_TYPES.SET_IS_LOADING, payload: { isLoading: value } }) as const;
-export const setAppNotification = (notification: AppNotification | null) =>
-  ({ type: ACTION_TYPES.SET_NOTIFICATION, payload: { notification } }) as const;
-
-// Thunk creators
-export const initializeApp = (): RootThunk => (dispatch) => {
-  appAPI
-    .me()
-    .then((data) => {
-      dispatch(setAuthUser(data));
-    })
-    .catch((error) => {
-      if (error.response) {
-        const { status, statusText, data } = error.response;
-        if (status === 401 && statusText === 'Unauthorized') {
-          console.log('Error: ', data.error);
-        } else {
-          handleApiRequestError(error, dispatch);
-        }
+export const initializeApp = createAppAsyncThunk(
+  'app/initializeApp',
+  async (_, { dispatch }) => {
+    try {
+      const user = await appAPI.me();
+      dispatch(setAuthUser(user));
+      return user;
+    } catch (error) {
+      if (
+        axios.isAxiosError<{ error?: string }>(error) &&
+        error.response?.status === 401
+      ) {
+        console.log('Error: ', error.response.data?.error);
       } else {
         handleApiRequestError(error, dispatch);
       }
-    })
-    .finally(() => dispatch(setAppIsInitialized(true)));
-};
+      throw error;
+    }
+  },
+);
+
+const appSlice = createSlice({
+  name: 'app',
+  initialState,
+  reducers: {
+    setAppIsLoading(state, action: PayloadAction<boolean>) {
+      state.isLoading = action.payload;
+    },
+    setAppNotification(state, action: PayloadAction<AppNotification | null>) {
+      state.notification = action.payload;
+    },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addMatcher(isAnyOf(initializeApp.fulfilled, initializeApp.rejected), (state) => {
+        state.isInitialized = true;
+      })
+      .addMatcher(isPending, (state) => {
+        state.isLoading = true;
+      })
+      .addMatcher(isAnyOf(isFulfilled, isRejected), (state) => {
+        state.isLoading = false;
+      });
+  },
+});
+
+export const { setAppIsLoading, setAppNotification } = appSlice.actions;
+export const appReducer = appSlice.reducer;
