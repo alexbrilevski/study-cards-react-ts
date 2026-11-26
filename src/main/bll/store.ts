@@ -1,10 +1,5 @@
-import {
-  applyMiddleware,
-  combineReducers,
-  legacy_createStore as createStore,
-} from 'redux';
+import { combineReducers, configureStore, type ThunkAction } from '@reduxjs/toolkit';
 import { useDispatch, useSelector, type TypedUseSelectorHook } from 'react-redux';
-import { thunk, type ThunkAction, type ThunkDispatch } from 'redux-thunk';
 import { appReducer, type AppActions } from './appReducer';
 import {
   registrationReducer,
@@ -36,7 +31,7 @@ import {
 } from '../../features/cardList/bll/cardListReducer';
 import { learnReducer, type LearnActions } from '../../features/learn/bll/learnReducer';
 
-export type RootState = ReturnType<typeof rootReducer>;
+export type RootState = ReturnType<typeof store.getState>;
 
 export type RootAction =
   | AppActions
@@ -55,7 +50,7 @@ export type RootThunk<ReturnType = void> = ThunkAction<
   unknown,
   RootAction
 >;
-export type AppDispatch = ThunkDispatch<RootState, unknown, RootAction>;
+export type AppDispatch = typeof store.dispatch;
 
 // Custom useDispatch and useSelector: Use throughout app instead of plain useDispatch and useSelector
 export const useAppDispatch = () => useDispatch<AppDispatch>();
@@ -73,4 +68,4 @@ const rootReducer = combineReducers({
   learn: learnReducer,
 });
 
-export const store = createStore(rootReducer, undefined, applyMiddleware(thunk));
+export const store = configureStore({ reducer: rootReducer });
