@@ -1,5 +1,5 @@
 import axios from 'axios';
-import type { Dispatch } from 'redux';
+import type { Dispatch } from '@reduxjs/toolkit';
 import { setAppNotification } from '../main/bll/appReducer';
 
 export const getErrorMessage = (error: unknown) => {

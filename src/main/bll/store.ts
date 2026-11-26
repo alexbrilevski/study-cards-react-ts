@@ -1,10 +1,4 @@
-import {
-  combineReducers,
-  configureStore,
-  type Reducer,
-  type ThunkAction,
-  type UnknownAction,
-} from '@reduxjs/toolkit';
+import { configureStore } from '@reduxjs/toolkit';
 import { useDispatch, useSelector, type TypedUseSelectorHook } from 'react-redux';
 import { appReducer } from './appReducer';
 import { registrationReducer } from '../../features/auth/Registration/bll/registrationReducer';
@@ -18,33 +12,22 @@ import { learnReducer } from '../../features/learn/bll/learnReducer';
 
 export type RootState = ReturnType<typeof store.getState>;
 
-export type RootThunk<ReturnType = void> = ThunkAction<
-  ReturnType,
-  RootState,
-  unknown,
-  UnknownAction
->;
 export type AppDispatch = typeof store.dispatch;
 
 // Custom useDispatch and useSelector: Use throughout app instead of plain useDispatch and useSelector
 export const useAppDispatch = () => useDispatch<AppDispatch>();
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
 
-const rootReducer = combineReducers({
-  app: appReducer,
-  registration: registrationReducer,
-  login: loginReducer,
-  profile: profileReducer,
-  newPassword: newPasswordReducer,
-  passwordRecovery: passwordRecoveryReducer,
-  packList: packListReducer,
-  cardList: cardListReducer,
-  learn: learnReducer,
-});
-
 export const store = configureStore({
-  reducer: rootReducer as unknown as Reducer<
-    ReturnType<typeof rootReducer>,
-    UnknownAction
-  >,
+  reducer: {
+    app: appReducer,
+    registration: registrationReducer,
+    login: loginReducer,
+    profile: profileReducer,
+    newPassword: newPasswordReducer,
+    passwordRecovery: passwordRecoveryReducer,
+    packList: packListReducer,
+    cardList: cardListReducer,
+    learn: learnReducer,
+  },
 });

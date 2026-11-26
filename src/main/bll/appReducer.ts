@@ -51,9 +51,6 @@ const appSlice = createSlice({
   name: 'app',
   initialState,
   reducers: {
-    setAppIsLoading(state, action: PayloadAction<boolean>) {
-      state.isLoading = action.payload;
-    },
     setAppNotification(state, action: PayloadAction<AppNotification | null>) {
       state.notification = action.payload;
     },
@@ -72,5 +69,5 @@ const appSlice = createSlice({
   },
 });
 
-export const { setAppIsLoading, setAppNotification } = appSlice.actions;
+export const { setAppNotification } = appSlice.actions;
 export const appReducer = appSlice.reducer;
