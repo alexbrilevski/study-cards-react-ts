@@ -1,78 +1,70 @@
-import type { RootThunk } from '../../../../main/bll/store';
-import { setAppIsLoading, setAppNotification } from '../../../../main/bll/appReducer';
+import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
+import { createAppAsyncThunk } from '../../../../main/bll/createAppAsyncThunk';
+import { setAppNotification } from '../../../../main/bll/appReducer';
+import {
+  getErrorMessage,
+  handleApiRequestError,
+} from '../../../../utils/notificationUtils';
 import { loginAPI } from '../dal/loginApi';
-import { setAuthUser } from '../../../profile/bll/profileReducer';
-import { handleApiRequestError } from '../../../../utils/notificationUtils';
 
-// Constants
-const ACTION_TYPES = {
-  SET_FORM_ERROR: 'login/SET-FORM-ERROR',
-} as const;
-
-// Types
-type InitState = typeof initState;
-type SetLoginFormErrorAction = ReturnType<typeof setLoginFormError>;
-export type LoginActions = SetLoginFormErrorAction;
-
-// Initial state
-const initState = {
-  error: null as string | null,
+type LoginState = {
+  error: string | null;
 };
 
-export const loginReducer = (
-  state: InitState = initState,
-  action: LoginActions,
-): InitState => {
-  switch (action.type) {
-    case ACTION_TYPES.SET_FORM_ERROR: {
-      return { ...state, ...action.payload };
+type LoginData = {
+  email: string;
+  password: string;
+  rememberMe: boolean;
+};
+
+const initialState: LoginState = {
+  error: null,
+};
+
+export const login = createAppAsyncThunk(
+  'login/login',
+  async ({ email, password, rememberMe }: LoginData, { rejectWithValue }) => {
+    try {
+      return await loginAPI.login(email, password, rememberMe);
+    } catch (error) {
+      return rejectWithValue(getErrorMessage(error));
     }
-    default:
-      return state;
+  },
+);
+
+export const logout = createAppAsyncThunk('login/logout', async (_, { dispatch }) => {
+  try {
+    await loginAPI.logout();
+    dispatch(
+      setAppNotification({
+        type: 'success',
+        message: 'You logged out successfully',
+      }),
+    );
+  } catch (error) {
+    handleApiRequestError(error, dispatch);
+    throw error;
   }
-};
+});
 
-// Action creators
-export const setLoginFormError = (error: string | null) =>
-  ({ type: ACTION_TYPES.SET_FORM_ERROR, payload: { error } }) as const;
-
-// Thunk creators
-export const login =
-  (email: string, password: string, rememberMe: boolean): RootThunk =>
-  (dispatch) => {
-    dispatch(setAppIsLoading(true));
-    loginAPI
-      .login(email, password, rememberMe)
-      .then((data) => {
-        dispatch(setAuthUser(data));
+const loginSlice = createSlice({
+  name: 'login',
+  initialState,
+  reducers: {
+    setLoginFormError(state, action: PayloadAction<string | null>) {
+      state.error = action.payload;
+    },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(login.pending, (state) => {
+        state.error = null;
       })
-      .catch((error) => {
-        const errorMessage = error.response
-          ? error.response.data.error
-          : error.message + ', more details in the console';
-        dispatch(setLoginFormError(errorMessage));
-      })
-      .finally(() => {
-        dispatch(setAppIsLoading(false));
+      .addCase(login.rejected, (state, action) => {
+        state.error = action.payload ?? null;
       });
-  };
-export const logout = (): RootThunk => (dispatch) => {
-  dispatch(setAppIsLoading(true));
-  loginAPI
-    .logout()
-    .then(() => {
-      dispatch(setAuthUser(null));
-      dispatch(
-        setAppNotification({
-          type: 'success',
-          message: 'You logged out successfully',
-        }),
-      );
-    })
-    .catch((error) => {
-      handleApiRequestError(error, dispatch);
-    })
-    .finally(() => {
-      dispatch(setAppIsLoading(false));
-    });
-};
+  },
+});
+
+export const { setLoginFormError } = loginSlice.actions;
+export const loginReducer = loginSlice.reducer;

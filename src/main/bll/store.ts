@@ -7,22 +7,10 @@ import {
 } from '@reduxjs/toolkit';
 import { useDispatch, useSelector, type TypedUseSelectorHook } from 'react-redux';
 import { appReducer } from './appReducer';
-import {
-  registrationReducer,
-  type RegistrationActions,
-} from '../../features/auth/Registration/bll/registrationReducer';
-import {
-  loginReducer,
-  type LoginActions,
-} from '../../features/auth/Login/bll/loginReducer';
-import {
-  newPasswordReducer,
-  type NewPasswordActions,
-} from '../../features/auth/PasswordRecovery/bll/newPasswordReducer';
-import {
-  passwordRecoveryReducer,
-  type PasswordRecoveryActions,
-} from '../../features/auth/PasswordRecovery/bll/passwordRecoveryReducer';
+import { registrationReducer } from '../../features/auth/Registration/bll/registrationReducer';
+import { loginReducer } from '../../features/auth/Login/bll/loginReducer';
+import { newPasswordReducer } from '../../features/auth/PasswordRecovery/bll/newPasswordReducer';
+import { passwordRecoveryReducer } from '../../features/auth/PasswordRecovery/bll/passwordRecoveryReducer';
 import { profileReducer } from '../../features/profile/bll/profileReducer';
 import {
   packListReducer,
@@ -37,10 +25,6 @@ import { learnReducer, type LearnActions } from '../../features/learn/bll/learnR
 export type RootState = ReturnType<typeof store.getState>;
 
 export type RootAction =
-  | RegistrationActions
-  | LoginActions
-  | NewPasswordActions
-  | PasswordRecoveryActions
   | PackListActions
   | CardListActions
   | LearnActions;

@@ -40,7 +40,6 @@ export const PasswordRecoveryForm = () => {
     },
 
     onSubmit: ({ email }) => {
-      if (error) dispatch(setPasswordRecoveryFormError(null));
       dispatch(recoverPassword(email));
     },
   });

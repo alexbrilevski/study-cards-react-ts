@@ -1,63 +1,59 @@
-import type { RootThunk } from '../../../../main/bll/store';
-import { setAppIsLoading } from '../../../../main/bll/appReducer';
+import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
+import { createAppAsyncThunk } from '../../../../main/bll/createAppAsyncThunk';
+import { getErrorMessage } from '../../../../utils/notificationUtils';
 import { passwordAPI } from '../dal/passwordApi';
 
-// Constants
-const ACTION_TYPES = {
-  SET_SUCCESS: 'newPassword/SET-SUCCESS',
-  SET_FORM_ERROR: 'newPassword/SET-FORM-ERROR',
-} as const;
+type NewPasswordState = {
+  success: boolean;
+  error: string | null;
+};
 
-// Types
-type InitState = typeof initState;
-type SetNewPasswordSuccessAction = ReturnType<typeof setNewPasswordSuccess>;
-type SetNewPasswordFormErrorAction = ReturnType<typeof setNewPasswordFormError>;
-export type NewPasswordActions =
-  | SetNewPasswordSuccessAction
-  | SetNewPasswordFormErrorAction;
+type NewPasswordData = {
+  password: string;
+  token: string;
+};
 
-// Initial state
-const initState = {
+const initialState: NewPasswordState = {
   success: false,
-  error: null as string | null,
+  error: null,
 };
 
-export const newPasswordReducer = (
-  state: InitState = initState,
-  action: NewPasswordActions,
-): InitState => {
-  switch (action.type) {
-    case ACTION_TYPES.SET_SUCCESS:
-    case ACTION_TYPES.SET_FORM_ERROR:
-      return { ...state, ...action.payload };
-    default:
-      return state;
-  }
-};
+export const setNewPassword = createAppAsyncThunk(
+  'newPassword/setNewPassword',
+  async ({ password, token }: NewPasswordData, { rejectWithValue }) => {
+    try {
+      await passwordAPI.setNewPassword(password, token);
+    } catch (error) {
+      return rejectWithValue(getErrorMessage(error));
+    }
+  },
+);
 
-// Action creators
-export const setNewPasswordSuccess = (success: boolean) =>
-  ({ type: ACTION_TYPES.SET_SUCCESS, payload: { success } }) as const;
-export const setNewPasswordFormError = (error: string | null) =>
-  ({ type: ACTION_TYPES.SET_FORM_ERROR, payload: { error } }) as const;
-
-// Thunk creators
-export const setNewPassword =
-  (password: string, token: string): RootThunk =>
-  (dispatch) => {
-    dispatch(setAppIsLoading(true));
-    passwordAPI
-      .setNewPassword(password, token)
-      .then(() => {
-        dispatch(setNewPasswordSuccess(true));
+const newPasswordSlice = createSlice({
+  name: 'newPassword',
+  initialState,
+  reducers: {
+    setNewPasswordSuccess(state, action: PayloadAction<boolean>) {
+      state.success = action.payload;
+    },
+    setNewPasswordFormError(state, action: PayloadAction<string | null>) {
+      state.error = action.payload;
+    },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(setNewPassword.pending, (state) => {
+        state.error = null;
       })
-      .catch((error) => {
-        const errorMessage = error.response
-          ? error.response.data.error
-          : error.message + ', more details in the console';
-        dispatch(setNewPasswordFormError(errorMessage));
+      .addCase(setNewPassword.fulfilled, (state) => {
+        state.success = true;
       })
-      .finally(() => {
-        dispatch(setAppIsLoading(false));
+      .addCase(setNewPassword.rejected, (state, action) => {
+        state.error = action.payload ?? null;
       });
-  };
+  },
+});
+
+export const { setNewPasswordSuccess, setNewPasswordFormError } =
+  newPasswordSlice.actions;
+export const newPasswordReducer = newPasswordSlice.reducer;

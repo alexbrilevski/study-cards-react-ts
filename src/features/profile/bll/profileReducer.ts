@@ -2,6 +2,7 @@ import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 import type { User } from '../../../main/types/user';
 import { createAppAsyncThunk } from '../../../main/bll/createAppAsyncThunk';
 import { initializeApp } from '../../../main/bll/appReducer';
+import { login, logout } from '../../auth/Login/bll/loginReducer';
 import { getErrorMessage } from '../../../utils/notificationUtils';
 import { profileAPI } from '../dal/profileApi';
 
@@ -31,9 +32,6 @@ const profileSlice = createSlice({
   name: 'profile',
   initialState,
   reducers: {
-    setAuthUser(state, action: PayloadAction<User | null>) {
-      state.user = action.payload;
-    },
     setEditProfileFormError(state, action: PayloadAction<string | null>) {
       state.error = action.payload;
     },
@@ -42,6 +40,12 @@ const profileSlice = createSlice({
     builder
       .addCase(initializeApp.fulfilled, (state, action) => {
         state.user = action.payload;
+      })
+      .addCase(login.fulfilled, (state, action) => {
+        state.user = action.payload;
+      })
+      .addCase(logout.fulfilled, (state) => {
+        state.user = null;
       })
       .addCase(saveUpdatedUserData.pending, (state) => {
         state.error = null;
@@ -55,5 +59,5 @@ const profileSlice = createSlice({
   },
 });
 
-export const { setAuthUser, setEditProfileFormError } = profileSlice.actions;
+export const { setEditProfileFormError } = profileSlice.actions;
 export const profileReducer = profileSlice.reducer;

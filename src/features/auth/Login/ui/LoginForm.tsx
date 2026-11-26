@@ -49,8 +49,7 @@ export const LoginForm = () => {
     },
 
     onSubmit: (values) => {
-      if (error) dispatch(setLoginFormError(null));
-      dispatch(login(values.email, values.password, values.rememberMe));
+      dispatch(login(values));
     },
   });
 

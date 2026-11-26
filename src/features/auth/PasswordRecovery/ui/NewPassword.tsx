@@ -24,7 +24,7 @@ export const NewPassword = () => {
     e.preventDefault();
 
     if (token) {
-      dispatch(setNewPassword(password, token));
+      dispatch(setNewPassword({ password, token }));
     }
   };
 

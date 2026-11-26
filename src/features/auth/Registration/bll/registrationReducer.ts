@@ -1,75 +1,64 @@
-import { setAppIsLoading } from '../../../../main/bll/appReducer';
-import type { RootThunk } from '../../../../main/bll/store';
+import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
+import { createAppAsyncThunk } from '../../../../main/bll/createAppAsyncThunk';
+import { getErrorMessage } from '../../../../utils/notificationUtils';
 import { registrationAPI } from '../dal/registrationApi';
 
-// Constants
-const ACTION_TYPES = {
-  SET_SUCCESS: 'registration/SET-SUCCESS',
-  SET_FORM_ERROR: 'registration/SET-FORM-ERROR',
-} as const;
+type RegistrationState = {
+  success: boolean;
+  error: string | null;
+};
 
-// Types
-type InitState = typeof initState;
-type SetRegistrationSuccessAction = ReturnType<typeof setRegistrationSuccess>;
-type SetRegistrationFormErrorAction = ReturnType<typeof setRegistrationFormError>;
-export type RegistrationActions =
-  | SetRegistrationSuccessAction
-  | SetRegistrationFormErrorAction;
 export type SignUpFormData = {
   email: string;
   password: string;
   passwordConfirm: string;
 };
 
-// Initial state
-const initState = {
+const initialState: RegistrationState = {
   success: false,
-  error: null as string | null,
+  error: null,
 };
 
-export const registrationReducer = (
-  state: InitState = initState,
-  action: RegistrationActions,
-): InitState => {
-  switch (action.type) {
-    case ACTION_TYPES.SET_SUCCESS:
-    case ACTION_TYPES.SET_FORM_ERROR:
-      return { ...state, ...action.payload };
-    default:
-      return state;
-  }
-};
-
-// Action creators
-export const setRegistrationSuccess = (success: boolean) =>
-  ({ type: ACTION_TYPES.SET_SUCCESS, payload: { success } }) as const;
-export const setRegistrationFormError = (error: string | null) =>
-  ({ type: ACTION_TYPES.SET_FORM_ERROR, payload: { error } }) as const;
-
-// Thunk creators
-export const register =
-  (formData: SignUpFormData): RootThunk =>
-  (dispatch) => {
-    const { email, password, passwordConfirm } = formData;
-
+export const register = createAppAsyncThunk(
+  'registration/register',
+  async ({ email, password, passwordConfirm }: SignUpFormData, { rejectWithValue }) => {
     if (password !== passwordConfirm) {
-      dispatch(setRegistrationFormError("Passwords don't match"));
-      return;
+      return rejectWithValue("Passwords don't match");
     }
 
-    dispatch(setAppIsLoading(true));
-    registrationAPI
-      .register(email, password)
-      .then(() => {
-        dispatch(setRegistrationSuccess(true));
+    try {
+      await registrationAPI.register(email, password);
+    } catch (error) {
+      return rejectWithValue(getErrorMessage(error));
+    }
+  },
+);
+
+const registrationSlice = createSlice({
+  name: 'registration',
+  initialState,
+  reducers: {
+    setRegistrationSuccess(state, action: PayloadAction<boolean>) {
+      state.success = action.payload;
+    },
+    setRegistrationFormError(state, action: PayloadAction<string | null>) {
+      state.error = action.payload;
+    },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(register.pending, (state) => {
+        state.error = null;
       })
-      .catch((error) => {
-        const errorMessage = error.response
-          ? error.response.data.error
-          : error.message + ', more details in the console';
-        dispatch(setRegistrationFormError(errorMessage));
+      .addCase(register.fulfilled, (state) => {
+        state.success = true;
       })
-      .finally(() => {
-        dispatch(setAppIsLoading(false));
+      .addCase(register.rejected, (state, action) => {
+        state.error = action.payload ?? null;
       });
-  };
+  },
+});
+
+export const { setRegistrationSuccess, setRegistrationFormError } =
+  registrationSlice.actions;
+export const registrationReducer = registrationSlice.reducer;

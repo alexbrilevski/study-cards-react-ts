@@ -50,7 +50,6 @@ export const RegistrationFrom = () => {
     },
 
     onSubmit: ({ email, password, passwordConfirm }) => {
-      if (error) dispatch(setRegistrationFormError(null));
       dispatch(register({ email, password, passwordConfirm }));
     },
   });
