@@ -12,10 +12,7 @@ import { loginReducer } from '../../features/auth/Login/bll/loginReducer';
 import { newPasswordReducer } from '../../features/auth/PasswordRecovery/bll/newPasswordReducer';
 import { passwordRecoveryReducer } from '../../features/auth/PasswordRecovery/bll/passwordRecoveryReducer';
 import { profileReducer } from '../../features/profile/bll/profileReducer';
-import {
-  packListReducer,
-  type PackListActions,
-} from '../../features/packList/bll/packListReducer';
+import { packListReducer } from '../../features/packList/bll/packListReducer';
 import {
   cardListReducer,
   type CardListActions,
@@ -25,7 +22,6 @@ import { learnReducer, type LearnActions } from '../../features/learn/bll/learnR
 export type RootState = ReturnType<typeof store.getState>;
 
 export type RootAction =
-  | PackListActions
   | CardListActions
   | LearnActions;
 

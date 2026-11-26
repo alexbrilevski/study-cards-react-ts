@@ -46,10 +46,9 @@ export const PackList = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const controller = new AbortController();
-    dispatch(fetchPackList(controller.signal));
+    const promise = dispatch(fetchPackList());
 
-    return () => controller.abort();
+    return () => promise.abort();
   }, [page, pageSize, packName, user_id, min, max, sortPacks, dispatch]);
 
   const handleCloseModal = () => {
