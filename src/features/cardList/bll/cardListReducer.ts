@@ -151,7 +151,10 @@ const cardListSlice = createSlice({
         state.params.pageCount = data.pageCount;
       })
       .addCase(editCurrentCardPack.fulfilled, (state, action) => {
-        if (action.payload) state.packName = action.payload.name;
+        if (action.payload) {
+          state.packName = action.payload.name;
+          state.packPrivate = action.payload.private;
+        }
       })
       .addCase(deleteCurrentCardPack.fulfilled, (state, action) => {
         if (action.payload) state.packDeleted = true;
