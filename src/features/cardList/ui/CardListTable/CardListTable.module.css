@@ -6,3 +6,28 @@
 .updated-col {
   width: 20%;
 }
+
+.card-image {
+  display: block;
+  max-width: 120px;
+  height: 36px;
+  border-radius: var(--border-radius-default);
+  object-fit: cover;
+}
+
+.video-thumbnail {
+  position: relative;
+  display: inline-block;
+}
+
+.video-thumbnail::after {
+  content: '▶';
+  position: absolute;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: var(--font-size-m);
+  color: #fff;
+  text-shadow: 0 0 4px rgba(0, 0, 0, 0.6);
+}

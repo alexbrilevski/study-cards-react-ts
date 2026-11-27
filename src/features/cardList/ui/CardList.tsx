@@ -55,6 +55,7 @@ const CardListPage: FC<CardListPageProps> = ({ cardPackId }) => {
   const authUser = useAppSelector((state) => state.profile.user);
   const packName = useAppSelector((state) => state.cardList.packName);
   const packPrivate = useAppSelector((state) => state.cardList.packPrivate);
+  const packDeckCover = useAppSelector((state) => state.cardList.packDeckCover);
   const packDeleted = useAppSelector((state) => state.cardList.packDeleted);
   const packUserId = useAppSelector((state) => state.cardList.packUserId);
   const cards = useAppSelector((state) => state.cardList.cards);
@@ -67,7 +68,11 @@ const CardListPage: FC<CardListPageProps> = ({ cardPackId }) => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-  const cardPackFormValues = { name: packName, isPrivate: packPrivate };
+  const cardPackFormValues = {
+    name: packName,
+    isPrivate: packPrivate,
+    deckCover: packDeckCover,
+  };
 
   useEffect(() => {
     const controller = new AbortController();
@@ -202,6 +207,7 @@ const CardListPage: FC<CardListPageProps> = ({ cardPackId }) => {
               </Button>
             ))}
         </div>
+        {packDeckCover && <img className={s['pack-cover']} src={packDeckCover} alt="" />}
       </div>
       <div className={s['card-list-header']}>
         <SearchField
@@ -257,7 +263,13 @@ const CardListPage: FC<CardListPageProps> = ({ cardPackId }) => {
         <CardFormModal
           title={'Edit card'}
           show
-          initValues={{ question: modal.card.question, answer: modal.card.answer }}
+          initValues={{
+            type: modal.card.type,
+            question: modal.card.question,
+            answer: modal.card.answer,
+            questionImg: modal.card.questionImg,
+            questionVideo: modal.card.questionVideo,
+          }}
           onCloseModal={handleCloseModal}
           onSubmitForm={handleEditCard}
         />

@@ -25,3 +25,13 @@
 .answer-block .card-grade p {
   margin-bottom: var(--indent-s);
 }
+
+.card-image {
+  display: block;
+  width: 100%;
+  max-height: 240px;
+  margin-top: var(--indent-s);
+  border-radius: var(--border-radius-default);
+  background-color: var(--accent-color-light);
+  object-fit: contain;
+}

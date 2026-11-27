@@ -3,6 +3,7 @@ import type { Card, CardListData, CardListQueryParams } from '../../../main/type
 
 export type NewCardData = {
   cardsPack_id: string;
+  type?: string;
   question: string;
   answer: string;
   grade?: number;
