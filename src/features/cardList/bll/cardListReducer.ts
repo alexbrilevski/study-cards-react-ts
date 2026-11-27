@@ -1,6 +1,7 @@
 import { setAppIsLoading } from '../../../main/bll/appReducer';
 import type { RootThunk } from '../../../main/bll/store';
 import type { Card, CardListData, CardListQueryParams } from '../../../main/types/card';
+import type { Pack } from '../../../main/types/pack';
 import { handleApiRequestError } from '../../../utils/notificationUtils';
 import { cardListAPI, type NewCardData, type UpdateCardData } from '../dal/cardListApi';
 import { packListAPI, type UpdatePackRequestData } from '../../packList/dal/packListApi';
@@ -9,7 +10,7 @@ import { packListAPI, type UpdatePackRequestData } from '../../packList/dal/pack
 const ACTION_TYPES = {
   SET_CARD_LIST_DATA: 'card-list/SET-DATA',
   SET_CARD_LIST_PARAMS: 'card-list/SET-CARD-LIST-PARAMS',
-  UPDATE_CARD_PACK_NAME: 'card-list/UPDATE-CARD-PACK-NAME',
+  UPDATE_CURRENT_CARD_PACK: 'card-list/UPDATE-CURRENT-CARD-PACK',
   SET_DELETED_CARD_PACK_STATE: 'card-list/SET-DELETED-CARD-PACK-STATE',
   RESET_CARD_LIST_STATE: 'card-list/RESET-CARD-LIST-STATE',
 } as const;
@@ -17,7 +18,7 @@ const ACTION_TYPES = {
 export type CardListActions =
   | ReturnType<typeof setCardListData>
   | ReturnType<typeof setCardListParams>
-  | ReturnType<typeof updateCardPackName>
+  | ReturnType<typeof updateCurrentCardPack>
   | ReturnType<typeof setDeletedCardPackState>
   | ReturnType<typeof resetCardListState>;
 
@@ -28,6 +29,7 @@ const initState = {
   packUserId: '',
   packName: '',
   packPrivate: false,
+  packDeckCover: '',
   packDeleted: false,
   cardsTotalCount: 0,
   maxGrade: 0,
@@ -53,13 +55,14 @@ export const cardListReducer = (
       return {
         ...state,
         ...cardListData,
+        packDeckCover: cardListData.packDeckCover ?? '',
         params: { ...state.params, page, pageCount },
       };
     }
     case ACTION_TYPES.SET_CARD_LIST_PARAMS: {
       return { ...state, params: { ...state.params, ...action.payload } };
     }
-    case ACTION_TYPES.UPDATE_CARD_PACK_NAME:
+    case ACTION_TYPES.UPDATE_CURRENT_CARD_PACK:
     case ACTION_TYPES.SET_DELETED_CARD_PACK_STATE: {
       return { ...state, ...action.payload };
     }
@@ -77,8 +80,15 @@ const setCardListData = (cardListData: CardListData) =>
   ({ type: ACTION_TYPES.SET_CARD_LIST_DATA, payload: cardListData }) as const;
 export const setCardListParams = (params: Omit<CardListQueryParams, 'cardsPack_id'>) =>
   ({ type: ACTION_TYPES.SET_CARD_LIST_PARAMS, payload: params }) as const;
-const updateCardPackName = (packName: string) =>
-  ({ type: ACTION_TYPES.UPDATE_CARD_PACK_NAME, payload: { packName } }) as const;
+const updateCurrentCardPack = (pack: Pack) =>
+  ({
+    type: ACTION_TYPES.UPDATE_CURRENT_CARD_PACK,
+    payload: {
+      packName: pack.name,
+      packPrivate: pack.private,
+      packDeckCover: pack.deckCover ?? '',
+    },
+  }) as const;
 export const setDeletedCardPackState = (isDeleted: boolean) =>
   ({
     type: ACTION_TYPES.SET_DELETED_CARD_PACK_STATE,
@@ -170,7 +180,7 @@ export const editCurrentCardPack =
       .then((data) => {
         const { updatedCardsPack } = data;
         if (updatedCardsPack) {
-          dispatch(updateCardPackName(updatedCardsPack.name));
+          dispatch(updateCurrentCardPack(updatedCardsPack));
         }
       })
       .catch((error) => {

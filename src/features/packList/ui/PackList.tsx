@@ -190,7 +190,11 @@ export const PackList = () => {
         <CardPackFormModal
           show
           title={'Edit pack'}
-          initValues={{ name: modal.pack.name, isPrivate: modal.pack.private }}
+          initValues={{
+            name: modal.pack.name,
+            isPrivate: modal.pack.private,
+            deckCover: modal.pack.deckCover ?? '',
+          }}
           onCloseModal={handleCloseModal}
           onSubmitForm={handleEditPack}
         />

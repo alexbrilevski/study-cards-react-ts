@@ -70,7 +70,16 @@ export const PackListTable: FC<PackListTableProps> = ({
           return (
             <tr key={pack._id}>
               <td>
-                <NavLink to={`${PATH.CARD_LIST}/${pack._id}`}>{pack.name}</NavLink>
+                <div className={s['pack-name']}>
+                  {pack.deckCover ? (
+                    <img className={s['pack-cover']} src={pack.deckCover} alt="" />
+                  ) : (
+                    <span className={`${s['pack-cover']} ${s['no-cover']}`}>
+                      No cover
+                    </span>
+                  )}
+                  <NavLink to={`${PATH.CARD_LIST}/${pack._id}`}>{pack.name}</NavLink>
+                </div>
               </td>
               <td>{pack.cardsCount}</td>
               <td>{formatDate(pack.updated)}</td>

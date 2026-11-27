@@ -1,3 +1,5 @@
+export type CardType = 'text' | 'image' | 'video';
+
 export type Card = {
   _id: string;
   cardsPack_id: string;

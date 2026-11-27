@@ -1,6 +1,7 @@
 import type { FC } from 'react';
 import type { Card } from '../../../../main/types/card';
 import { formatDate } from '../../../../utils/formatDate';
+import { getCardType } from '../../../../utils/getCardType';
 import Button from '../../../../main/ui/common/components/Button/Button';
 import ButtonSort from '../../../../main/ui/common/components/ButtonSort/ButtonSort';
 import Grade from '../../../../main/ui/common/components/Grade/Grade';
@@ -16,6 +17,21 @@ type CardListTableProps = {
   onSortChange: (sortCards: string) => void;
   onEdit: (card: Card) => void;
   onDelete: (card: Card) => void;
+};
+
+const QuestionCell: FC<{ card: Card }> = ({ card }) => {
+  switch (getCardType(card)) {
+    case 'image':
+      return <img className={s['card-image']} src={card.questionImg} alt="Question" />;
+    case 'video':
+      return (
+        <span className={s['video-thumbnail']}>
+          <img className={s['card-image']} src={card.questionImg} alt="Question video" />
+        </span>
+      );
+    default:
+      return card.question;
+  }
 };
 
 export const CardListTable: FC<CardListTableProps> = ({
@@ -72,7 +88,9 @@ export const CardListTable: FC<CardListTableProps> = ({
       <tbody className="table-body">
         {cards.map((card) => (
           <tr key={card._id}>
-            <td>{card.question}</td>
+            <td>
+              <QuestionCell card={card} />
+            </td>
             <td>{card.answer}</td>
             <td>{formatDate(card.updated)}</td>
             <td>

@@ -1,3 +1,11 @@
 .card-list-header {
   margin-bottom: var(--indent-base);
 }
+
+.pack-cover {
+  display: block;
+  width: 170px;
+  height: 107px;
+  border-radius: var(--border-radius-default);
+  object-fit: cover;
+}

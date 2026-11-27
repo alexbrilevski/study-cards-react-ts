@@ -11,3 +11,28 @@
 .actions-col {
   width: 15%;
 }
+
+.pack-name {
+  display: flex;
+  align-items: center;
+  gap: var(--indent-s);
+}
+
+.pack-cover {
+  flex-shrink: 0;
+  width: 56px;
+  height: 36px;
+  border-radius: var(--border-radius-default);
+  background-color: var(--accent-color-light);
+  object-fit: cover;
+}
+
+.no-cover {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 10px;
+  line-height: 1;
+  color: var(--caption-color);
+  white-space: nowrap;
+}
