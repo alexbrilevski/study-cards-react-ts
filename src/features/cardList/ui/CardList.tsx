@@ -268,6 +268,7 @@ const CardListPage: FC<CardListPageProps> = ({ cardPackId }) => {
             question: modal.card.question,
             answer: modal.card.answer,
             questionImg: modal.card.questionImg,
+            questionVideo: modal.card.questionVideo,
           }}
           onCloseModal={handleCloseModal}
           onSubmitForm={handleEditCard}

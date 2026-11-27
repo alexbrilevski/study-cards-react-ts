@@ -29,6 +29,8 @@ export const LearnCard: FC<LearnCardProps> = ({ card }) => {
     return <div>No cards found in this pack.</div>;
   }
 
+  const cardType = getCardType(card);
+
   const handleShowAnswer = () => {
     setShowAnswer(true);
   };
@@ -44,12 +46,24 @@ export const LearnCard: FC<LearnCardProps> = ({ card }) => {
   return (
     <div className={s['learn-card']}>
       <div className={s['question-block']}>
-        {getCardType(card) === 'image' ? (
+        {cardType === 'image' && (
           <div className={s['question']}>
             <b>Question:</b>
             <img className={s['card-image']} src={card.questionImg} alt="Question" />
           </div>
-        ) : (
+        )}
+        {cardType === 'video' && (
+          <div className={s['question']}>
+            <b>Question:</b>
+            <video
+              className={s['card-image']}
+              src={card.questionVideo}
+              poster={card.questionImg}
+              controls
+            />
+          </div>
+        )}
+        {cardType === 'text' && (
           <p className={s['question']}>
             <b>Question:</b> {card.question}
           </p>

@@ -8,6 +8,8 @@ type MediaFieldProps = {
   placeholder: string;
   accept: string;
   value: string;
+  mediaType?: 'image' | 'video';
+  poster?: string;
   error?: string;
   onSelect: (file: File) => void;
 };
@@ -18,6 +20,8 @@ export const MediaField: FC<MediaFieldProps> = ({
   placeholder,
   accept,
   value,
+  mediaType = 'image',
+  poster,
   error,
   onSelect,
 }) => {
@@ -34,11 +38,13 @@ export const MediaField: FC<MediaFieldProps> = ({
           {changeLabel}
         </FilePicker>
       </div>
-      {value ? (
-        <img className={s['preview']} src={value} alt="" />
-      ) : (
-        <div className={s['placeholder']}>{placeholder}</div>
+      {value && mediaType === 'video' && (
+        <video className={s['preview']} src={value} poster={poster} controls />
       )}
+      {value && mediaType === 'image' && (
+        <img className={s['preview']} src={value} alt="" />
+      )}
+      {!value && <div className={s['placeholder']}>{placeholder}</div>}
       {error && <span className={s['error']}>{error}</span>}
     </div>
   );

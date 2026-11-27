@@ -19,6 +19,21 @@ type CardListTableProps = {
   onDelete: (card: Card) => void;
 };
 
+const QuestionCell: FC<{ card: Card }> = ({ card }) => {
+  switch (getCardType(card)) {
+    case 'image':
+      return <img className={s['card-image']} src={card.questionImg} alt="Question" />;
+    case 'video':
+      return (
+        <span className={s['video-thumbnail']}>
+          <img className={s['card-image']} src={card.questionImg} alt="Question video" />
+        </span>
+      );
+    default:
+      return card.question;
+  }
+};
+
 export const CardListTable: FC<CardListTableProps> = ({
   cards,
   sortCards,
@@ -74,11 +89,7 @@ export const CardListTable: FC<CardListTableProps> = ({
         {cards.map((card) => (
           <tr key={card._id}>
             <td>
-              {getCardType(card) === 'image' ? (
-                <img className={s['card-image']} src={card.questionImg} alt="Question" />
-              ) : (
-                card.question
-              )}
+              <QuestionCell card={card} />
             </td>
             <td>{card.answer}</td>
             <td>{formatDate(card.updated)}</td>
