@@ -263,7 +263,12 @@ const CardListPage: FC<CardListPageProps> = ({ cardPackId }) => {
         <CardFormModal
           title={'Edit card'}
           show
-          initValues={{ question: modal.card.question, answer: modal.card.answer }}
+          initValues={{
+            type: modal.card.type,
+            question: modal.card.question,
+            answer: modal.card.answer,
+            questionImg: modal.card.questionImg,
+          }}
           onCloseModal={handleCloseModal}
           onSubmitForm={handleEditCard}
         />

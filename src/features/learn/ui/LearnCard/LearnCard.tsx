@@ -4,6 +4,7 @@ import Button from '../../../../main/ui/common/components/Button/Button';
 import InputRadio from '../../../../main/ui/common/components/InputRadio/InputRadio';
 import { useAppDispatch, useAppSelector } from '../../../../main/bll/store';
 import { updateCardGrade } from '../../bll/learnReducer';
+import { getCardType } from '../../../../utils/getCardType';
 import s from './LearnCard.module.css';
 
 type LearnCardProps = {
@@ -43,9 +44,16 @@ export const LearnCard: FC<LearnCardProps> = ({ card }) => {
   return (
     <div className={s['learn-card']}>
       <div className={s['question-block']}>
-        <p className={s['question']}>
-          <b>Question:</b> {card.question}
-        </p>
+        {getCardType(card) === 'image' ? (
+          <div className={s['question']}>
+            <b>Question:</b>
+            <img className={s['card-image']} src={card.questionImg} alt="Question" />
+          </div>
+        ) : (
+          <p className={s['question']}>
+            <b>Question:</b> {card.question}
+          </p>
+        )}
         <p className={s['card-shots']}>
           Number of times the question was answered: <b>{card.shots}</b>
         </p>

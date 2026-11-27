@@ -1,0 +1,14 @@
+.format-field {
+  margin-bottom: var(--indent-m);
+}
+
+.format-label {
+  display: block;
+  margin-bottom: var(--indent-xs);
+  font-size: var(--font-size-m);
+  color: var(--caption-color);
+}
+
+.format-field select {
+  width: 100%;
+}

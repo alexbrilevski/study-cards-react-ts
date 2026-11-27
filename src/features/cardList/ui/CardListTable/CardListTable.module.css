@@ -6,3 +6,11 @@
 .updated-col {
   width: 20%;
 }
+
+.card-image {
+  display: block;
+  max-width: 120px;
+  height: 36px;
+  border-radius: var(--border-radius-default);
+  object-fit: cover;
+}

@@ -1,6 +1,7 @@
 import type { FC } from 'react';
 import type { Card } from '../../../../main/types/card';
 import { formatDate } from '../../../../utils/formatDate';
+import { getCardType } from '../../../../utils/getCardType';
 import Button from '../../../../main/ui/common/components/Button/Button';
 import ButtonSort from '../../../../main/ui/common/components/ButtonSort/ButtonSort';
 import Grade from '../../../../main/ui/common/components/Grade/Grade';
@@ -72,7 +73,13 @@ export const CardListTable: FC<CardListTableProps> = ({
       <tbody className="table-body">
         {cards.map((card) => (
           <tr key={card._id}>
-            <td>{card.question}</td>
+            <td>
+              {getCardType(card) === 'image' ? (
+                <img className={s['card-image']} src={card.questionImg} alt="Question" />
+              ) : (
+                card.question
+              )}
+            </td>
             <td>{card.answer}</td>
             <td>{formatDate(card.updated)}</td>
             <td>
