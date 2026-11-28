@@ -3,4 +3,6 @@
   font-weight: var(--font-weight-caption);
   line-height: var(--line-height-caption);
   color: var(--heading-color);
+  white-space: nowrap;
+  flex-shrink: 0;
 }

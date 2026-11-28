@@ -32,7 +32,9 @@ export const UserMenu: FC<UserMenuProps> = ({ user }) => {
       iconSize={16}
       trigger={
         <>
-          <span className={s['user-name']}>{user.name}</span>
+          <span className={s['user-name']} title={user.name}>
+            {user.name}
+          </span>
           <img
             className={s['user-avatar']}
             src={user.avatar || defaultUserAvatar}
