@@ -224,3 +224,14 @@
     width: 100%;
   }
 }
+
+@media (max-width: 600px) {
+  .page-header-main {
+    display: contents;
+  }
+
+  .page-header-main > button {
+    order: 1;
+    width: 100%;
+  }
+}
