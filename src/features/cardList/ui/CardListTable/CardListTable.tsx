@@ -43,74 +43,76 @@ export const CardListTable: FC<CardListTableProps> = ({
   onDelete,
 }) => {
   return (
-    <table className="table">
-      <thead className="table-head">
-        <tr>
-          <th className={s['question-col']}>
-            <ButtonSort
-              sortParam={'question'}
-              currentSorting={sortCards}
-              onSortClick={onSortChange}
-            >
-              Question
-            </ButtonSort>
-          </th>
-          <th className={s['answer-col']}>
-            <ButtonSort
-              sortParam={'answer'}
-              currentSorting={sortCards}
-              onSortClick={onSortChange}
-            >
-              Answer
-            </ButtonSort>
-          </th>
-          <th className={s['updated-col']}>
-            <ButtonSort
-              sortParam={'updated'}
-              currentSorting={sortCards}
-              onSortClick={onSortChange}
-            >
-              Last Updated
-            </ButtonSort>
-          </th>
-          <th>
-            <ButtonSort
-              sortParam={'grade'}
-              currentSorting={sortCards}
-              onSortClick={onSortChange}
-            >
-              Grade
-            </ButtonSort>
-          </th>
-          {isAuthUserPack && <th></th>}
-        </tr>
-      </thead>
-      <tbody className="table-body">
-        {cards.map((card) => (
-          <tr key={card._id}>
-            <td>
-              <QuestionCell card={card} />
-            </td>
-            <td>{card.answer}</td>
-            <td>{formatDate(card.updated)}</td>
-            <td>
-              <Grade value={card.grade} />
-            </td>
-            {isAuthUserPack && (
-              <td>
-                <div className="table-actions">
-                  <Button aria-label={'Edit card'} onClick={() => onEdit(card)}>
-                    <IconSvg src={editIcon} size={16} />
-                  </Button>
-                  <Button aria-label={'Delete card'} onClick={() => onDelete(card)}>
-                    <IconSvg src={deleteIcon} size={16} />
-                  </Button>
-                </div>
-              </td>
-            )}
+    <div className="table-container">
+      <table className="table">
+        <thead className="table-head">
+          <tr>
+            <th className={s['question-col']}>
+              <ButtonSort
+                sortParam={'question'}
+                currentSorting={sortCards}
+                onSortClick={onSortChange}
+              >
+                Question
+              </ButtonSort>
+            </th>
+            <th className={s['answer-col']}>
+              <ButtonSort
+                sortParam={'answer'}
+                currentSorting={sortCards}
+                onSortClick={onSortChange}
+              >
+                Answer
+              </ButtonSort>
+            </th>
+            <th className={s['updated-col']}>
+              <ButtonSort
+                sortParam={'updated'}
+                currentSorting={sortCards}
+                onSortClick={onSortChange}
+              >
+                Last Updated
+              </ButtonSort>
+            </th>
+            <th>
+              <ButtonSort
+                sortParam={'grade'}
+                currentSorting={sortCards}
+                onSortClick={onSortChange}
+              >
+                Grade
+              </ButtonSort>
+            </th>
+            {isAuthUserPack && <th></th>}
           </tr>
-        ))}
-      </tbody>
-    </table>
+        </thead>
+        <tbody className="table-body">
+          {cards.map((card) => (
+            <tr key={card._id}>
+              <td>
+                <QuestionCell card={card} />
+              </td>
+              <td>{card.answer}</td>
+              <td>{formatDate(card.updated)}</td>
+              <td>
+                <Grade value={card.grade} />
+              </td>
+              {isAuthUserPack && (
+                <td>
+                  <div className="table-actions">
+                    <Button aria-label={'Edit card'} onClick={() => onEdit(card)}>
+                      <IconSvg src={editIcon} size={16} />
+                    </Button>
+                    <Button aria-label={'Delete card'} onClick={() => onDelete(card)}>
+                      <IconSvg src={deleteIcon} size={16} />
+                    </Button>
+                  </div>
+                </td>
+              )}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 };

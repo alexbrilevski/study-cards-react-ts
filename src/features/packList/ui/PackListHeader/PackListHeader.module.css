@@ -1,5 +1,6 @@
 .pack-list-header {
   display: flex;
+  flex-wrap: wrap;
   align-items: flex-end;
   gap: var(--indent-base);
   margin-bottom: var(--indent-base);
@@ -13,7 +14,7 @@
 }
 
 .pack-name-filter {
-  flex-grow: 1;
+  flex: 1 1 240px;
   max-width: 413px;
 }
 
