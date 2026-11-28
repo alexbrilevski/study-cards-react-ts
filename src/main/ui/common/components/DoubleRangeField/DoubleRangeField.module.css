@@ -46,7 +46,6 @@
 .double-range-thumb,
 .double-range-thumb::-webkit-slider-thumb {
   appearance: none;
-  -webkit-tap-highlight-color: transparent;
 }
 
 .double-range-thumb {
