@@ -1,7 +1,11 @@
 .user-name {
+  overflow: hidden;
+  max-width: 240px;
   font-size: var(--font-size-base);
   font-weight: 500;
   line-height: var(--line-height-l);
+  white-space: nowrap;
+  text-overflow: ellipsis;
   border-bottom: 1px dashed #000;
 }
 
@@ -10,4 +14,15 @@
   aspect-ratio: 1 / 1;
   border-radius: 50%;
   object-fit: cover;
+}
+
+@media (max-width: 600px) {
+  .user-name {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
 }

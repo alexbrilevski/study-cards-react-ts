@@ -49,8 +49,13 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: var(--indent-s) var(--indent-base);
   width: 100%;
   min-height: 36px;
+}
+
+.page-header-main > button {
+  flex-shrink: 0;
 }
 
 .page-header h1 {
@@ -136,12 +141,17 @@
   color: var(--accent-color-dark);
 }
 
+.table-container {
+  overflow-x: auto;
+  filter: var(--table-shadow);
+}
+
 .table {
   width: 100%;
+  min-width: 640px;
   border-collapse: collapse;
   border: 1px solid var(--table-border-color);
   text-align: left;
-  filter: var(--table-shadow);
 }
 
 .table-head {
@@ -211,6 +221,17 @@
 
 @media (max-width: 450px) {
   .form-container {
+    width: 100%;
+  }
+}
+
+@media (max-width: 600px) {
+  .page-header-main {
+    display: contents;
+  }
+
+  .page-header-main > button {
+    order: 1;
     width: 100%;
   }
 }

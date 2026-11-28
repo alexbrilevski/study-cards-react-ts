@@ -63,7 +63,7 @@
 }
 
 .dropdown span {
-  text-wrap: nowrap;
+  white-space: nowrap;
 }
 
 .dropdown button {
