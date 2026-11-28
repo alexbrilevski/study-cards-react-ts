@@ -25,7 +25,7 @@
 
 .pagination .selected-page {
   background-color: var(--primary-button-color);
-  border-color: 1px solid var(--primary-button-color);
+  border-color: var(--primary-button-color);
   color: var(--button-text-color-light);
 }
 
