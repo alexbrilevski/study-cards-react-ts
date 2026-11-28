@@ -1,5 +1,6 @@
 .pagination {
   display: flex;
+  flex-wrap: wrap;
   gap: var(--indent-s);
   align-items: center;
   margin-top: var(--indent-base);
