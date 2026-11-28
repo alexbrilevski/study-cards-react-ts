@@ -136,12 +136,17 @@
   color: var(--accent-color-dark);
 }
 
+.table-container {
+  overflow-x: auto;
+  filter: var(--table-shadow);
+}
+
 .table {
   width: 100%;
+  min-width: 640px;
   border-collapse: collapse;
   border: 1px solid var(--table-border-color);
   text-align: left;
-  filter: var(--table-shadow);
 }
 
 .table-head {
